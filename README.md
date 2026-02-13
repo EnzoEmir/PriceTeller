@@ -33,3 +33,18 @@ pip install -r requirements.txt
 ```
 uvicorn main:app --reload
 ```
+
+### Para rodar o frontend
+
+###### Instale as dependências, se ainda não tiver instalado
+
+```
+cd frontend
+npm install
+```
+
+###### Execute o comando para servir os arquivos
+
+```
+npm run dev
+```
