@@ -13,7 +13,7 @@ interface LogoProps {
 export default function Logo({
   src = "/logo.png",
   alt = "Logo",
-  textFallback = "MyApp",
+  textFallback = "PriceTeller",
 }: LogoProps) {
   const [error, setError] = useState(false);
 
