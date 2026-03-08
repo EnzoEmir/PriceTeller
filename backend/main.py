@@ -3,7 +3,7 @@ from datetime import datetime
 from app.core.config import settings
 from app.core.database import criar_tabelas
 from app.models import Categoria, Produto, Loja, Oferta, Historico
-from app.routes import categorias, produtos, lojas, ofertas
+from app.routes import categorias, produtos, lojas, ofertas, historico
 
 app = FastAPI()
 
@@ -11,6 +11,7 @@ app.include_router(categorias.router)
 app.include_router(produtos.router)
 app.include_router(lojas.router)
 app.include_router(ofertas.router)
+app.include_router(historico.router)
 
 
 
