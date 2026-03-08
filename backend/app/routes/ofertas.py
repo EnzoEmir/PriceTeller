@@ -47,3 +47,51 @@ def buscar_oferta(oferta_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Oferta não encontrada")
     
     return oferta
+
+
+@router.put("/{oferta_id}", response_model=Oferta)
+def atualizar_oferta(
+    oferta_id: int,
+    oferta_atualizada: Oferta,
+    session: Session = Depends(get_session)
+):
+    """
+    Atualiza uma oferta existente.
+    
+    - **oferta_id**: ID da oferta a ser atualizada
+    - **fk_produto_id**: Novo produto
+    - **fk_loja_id**: Nova loja
+    - **preco_atual**: Novo preço
+    - **url_link**: Novo link
+    """
+    oferta = session.get(Oferta, oferta_id)
+    
+    if not oferta:
+        raise HTTPException(status_code=404, detail="Oferta não encontrada")
+    
+    oferta.fk_produto_id = oferta_atualizada.fk_produto_id
+    oferta.fk_loja_id = oferta_atualizada.fk_loja_id
+    oferta.preco_atual = oferta_atualizada.preco_atual
+    oferta.url_link = oferta_atualizada.url_link
+    
+    session.add(oferta)
+    session.commit()
+    session.refresh(oferta)
+    return oferta
+
+
+@router.delete("/{oferta_id}", status_code=204)
+def deletar_oferta(oferta_id: int, session: Session = Depends(get_session)):
+    """
+    Deleta uma oferta do banco de dados.
+    
+    - **oferta_id**: ID da oferta a ser deletada
+    """
+    oferta = session.get(Oferta, oferta_id)
+    
+    if not oferta:
+        raise HTTPException(status_code=404, detail="Oferta não encontrada")
+    
+    session.delete(oferta)
+    session.commit()
+    return None

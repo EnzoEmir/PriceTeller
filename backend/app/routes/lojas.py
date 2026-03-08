@@ -45,3 +45,47 @@ def buscar_loja(loja_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Loja não encontrada")
     
     return loja
+
+
+@router.put("/{loja_id}", response_model=Loja)
+def atualizar_loja(
+    loja_id: int,
+    loja_atualizada: Loja,
+    session: Session = Depends(get_session)
+):
+    """
+    Atualiza uma loja existente.
+    
+    - **loja_id**: ID da loja a ser atualizada
+    - **nome**: Novo nome da loja
+    - **url_base**: Nova URL base
+    """
+    loja = session.get(Loja, loja_id)
+    
+    if not loja:
+        raise HTTPException(status_code=404, detail="Loja não encontrada")
+    
+    loja.nome = loja_atualizada.nome
+    loja.url_base = loja_atualizada.url_base
+    
+    session.add(loja)
+    session.commit()
+    session.refresh(loja)
+    return loja
+
+
+@router.delete("/{loja_id}", status_code=204)
+def deletar_loja(loja_id: int, session: Session = Depends(get_session)):
+    """
+    Deleta uma loja do banco de dados.
+    
+    - **loja_id**: ID da loja a ser deletada
+    """
+    loja = session.get(Loja, loja_id)
+    
+    if not loja:
+        raise HTTPException(status_code=404, detail="Loja não encontrada")
+    
+    session.delete(loja)
+    session.commit()
+    return None

@@ -44,3 +44,45 @@ def buscar_categoria(categoria_id: int, session: Session = Depends(get_session))
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
     
     return categoria
+
+
+@router.put("/{categoria_id}", response_model=Categoria)
+def atualizar_categoria(
+    categoria_id: int,
+    categoria_atualizada: Categoria,
+    session: Session = Depends(get_session)
+):
+    """
+    Atualiza uma categoria existente.
+    
+    - **categoria_id**: ID da categoria a ser atualizada
+    - **nome**: Novo nome da categoria
+    """
+    categoria = session.get(Categoria, categoria_id)
+    
+    if not categoria:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    
+    categoria.nome = categoria_atualizada.nome
+    
+    session.add(categoria)
+    session.commit()
+    session.refresh(categoria)
+    return categoria
+
+
+@router.delete("/{categoria_id}", status_code=204)
+def deletar_categoria(categoria_id: int, session: Session = Depends(get_session)):
+    """
+    Deleta uma categoria do banco de dados.
+    
+    - **categoria_id**: ID da categoria a ser deletada
+    """
+    categoria = session.get(Categoria, categoria_id)
+    
+    if not categoria:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    
+    session.delete(categoria)
+    session.commit()
+    return None
