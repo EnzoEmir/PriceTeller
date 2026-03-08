@@ -4,9 +4,9 @@ import Link from "next/link";
 export default function DesktopNav(){
 
     const links = [
-        { href: "/", label: "Home" },
-        { href: "/pricing", label: "Pricing" },
-        { href: "/about", label: "About" },
+        { href: "/", label: "Página Inicial" },
+        { href: "/pricing", label: "Planos" },
+        { href: "/about", label: "Sobre Nós" },
     ];
 
     return (
