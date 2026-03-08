@@ -30,7 +30,7 @@ export default function Logo({
           className="object-contain"
         />
       ) : (
-        <span className="text-xl font-bold tracking-tight">
+        <span className="font-display text-xl font-bold tracking-tight">
           {textFallback}
         </span>
       )}
