@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from datetime import datetime
 from app.core.config import settings
+from app.core.database import criar_tabelas
+from app.models import Categoria, Produto, Loja, Oferta, Historico
 
 app = FastAPI()
+
+
+@app.on_event("startup")
+def on_startup():
+    criar_tabelas()
+    print("Tabelas criadas/verificadas no banco de dados!")
 
 @app.get("/")
 def read_root():
