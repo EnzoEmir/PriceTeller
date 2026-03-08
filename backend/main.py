@@ -3,8 +3,11 @@ from datetime import datetime
 from app.core.config import settings
 from app.core.database import criar_tabelas
 from app.models import Categoria, Produto, Loja, Oferta, Historico
+from app.routes import categorias
 
 app = FastAPI()
+
+app.include_router(categorias.router)
 
 
 @app.on_event("startup")
