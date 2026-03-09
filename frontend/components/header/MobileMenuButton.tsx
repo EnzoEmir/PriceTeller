@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 
 const links = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Página Inical" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "Sobre Nós" },
 ];
 
 export default function MobileMenuButton(){
