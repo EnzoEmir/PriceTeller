@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import Depends, HTTPException
 from sqlmodel import Session, select
-from typing import List
 
 from app.core.database import get_session
 from app.models.categoria import Categoria
 
-router = APIRouter(prefix="/categorias", tags=["Categorias"])
 
 class CategoriaService:
     def __init__():
