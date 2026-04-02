@@ -1,88 +1,55 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+"""
+Camada controller/routes para categorias
+Se precisar escalar, pode separar routes de controller
+"""
+
+# task 1: fazer dependency injection em categoria: Categoria
+# task 2: fazer tratamento de erro
+# task 3: fazer validação de input
+
+from fastapi import APIRouter, Depends
+from sqlmodel import Session
 from typing import List
 
 from app.core.database import get_session
 from app.models.categoria import Categoria
+from app.services.categoria_service import CategoriaService
 
 router = APIRouter(prefix="/categorias", tags=["Categorias"])
 
+servicoCategoria = CategoriaService()
 
 @router.post("/", response_model=Categoria, status_code=201)
-def criar_categoria(categoria: Categoria, session: Session = Depends(get_session)):
-    """
-    Cria uma nova categoria no banco de dados.
-    
-    - **nome**: Nome da categoria (ex: 'Processador', 'Placa de Vídeo')
-    """
-    session.add(categoria)
-    session.commit()
-    session.refresh(categoria)  
-    return categoria
-
+def criar_categoria(
+    categoria: Categoria,
+    session: Session = Depends(get_session)
+):
+    return servicoCategoria.criar_categoria(categoria, session)
 
 @router.get("/", response_model=List[Categoria])
-def listar_categorias(session: Session = Depends(get_session)):
-    """
-    Retorna todas as categorias cadastradas.
-    """
-    statement = select(Categoria)
-    categorias = session.exec(statement).all()
-    return categorias
-
+def listar_categoria(
+    session: Session = Depends(get_session)
+):
+    return servicoCategoria.listar_categorias(session)
 
 @router.get("/{categoria_id}", response_model=Categoria)
-def buscar_categoria(categoria_id: int, session: Session = Depends(get_session)):
-    """
-    Busca uma categoria específica por ID.
-    
-    - **categoria_id**: ID da categoria
-    """
-    categoria = session.get(Categoria, categoria_id)
-    
-    if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    
-    return categoria
-
+def buscar_categoria(
+    categoria_id: int,
+    session: Session = Depends(get_session)
+):
+    return servicoCategoria.buscar_categoria(categoria_id, session)
 
 @router.put("/{categoria_id}", response_model=Categoria)
 def atualizar_categoria(
     categoria_id: int,
-    categoria_atualizada: Categoria,
+    categoria: Categoria,
     session: Session = Depends(get_session)
 ):
-    """
-    Atualiza uma categoria existente.
-    
-    - **categoria_id**: ID da categoria a ser atualizada
-    - **nome**: Novo nome da categoria
-    """
-    categoria = session.get(Categoria, categoria_id)
-    
-    if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    
-    categoria.nome = categoria_atualizada.nome
-    
-    session.add(categoria)
-    session.commit()
-    session.refresh(categoria)
-    return categoria
-
+    return servicoCategoria.atualizar_categoria(categoria_id, categoria, session)
 
 @router.delete("/{categoria_id}", status_code=204)
-def deletar_categoria(categoria_id: int, session: Session = Depends(get_session)):
-    """
-    Deleta uma categoria do banco de dados.
-    
-    - **categoria_id**: ID da categoria a ser deletada
-    """
-    categoria = session.get(Categoria, categoria_id)
-    
-    if not categoria:
-        raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    
-    session.delete(categoria)
-    session.commit()
-    return None
+def deletar_categoria(
+    categoria_id: int,
+    session: Session = Depends(get_session)
+):
+    servicoCategoria.deletar_categoria(categoria_id, session)
