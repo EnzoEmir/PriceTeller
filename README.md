@@ -54,5 +54,5 @@ npm run dev
 ###### Execute o comando para rodar o script de fake data
 ```
 cd backend
-python .\backend\app\test\builder\seed.py
+python .\app\test\builder\seed.py
 ```
