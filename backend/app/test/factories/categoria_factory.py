@@ -1,4 +1,5 @@
 from faker import Faker
+from models.categoria import Categoria
 
 fake = Faker('pt_BR')
 
@@ -12,3 +13,16 @@ def make_categoria(nome_length=None, **overrides):
         "nome": nome,
         **overrides
     }
+
+def create_categoria(db, **overrides):
+    data = make_categoria(**overrides)
+
+    categoria = Categoria(
+        nome=data["nome"]
+    )
+
+    db.add(categoria)
+    db.commit()
+    db.refresh(categoria)
+
+    return categoria
