@@ -1,5 +1,5 @@
 from faker import Faker
-from models.categoria import Categoria
+from app.models.categoria import Categoria
 
 fake = Faker('pt_BR')
 

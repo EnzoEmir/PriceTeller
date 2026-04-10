@@ -1,5 +1,5 @@
 from faker import Faker
-from models.loja import Loja
+from app.models.loja import Loja
 
 fake = Faker('pt_BR')
 

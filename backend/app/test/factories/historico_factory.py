@@ -1,6 +1,6 @@
 from faker import Faker
-from oferta_factory import make_oferta
-from models.historico import Historico
+from app.test.factories.oferta_factory import make_oferta
+from app.models.historico import Historico
 
 
 fake = Faker('pt_BR')
@@ -14,7 +14,7 @@ def make_history(oferta=None, **overrides):
         "data": fake.date_between(start_date='-5y', end_date='today'),
         # "fk_oferta_id": oferta["id"], #task: verificar como relacionar a oferta com produto em factory
         **overrides
-    }, oferta
+    }
 
 def create_historico(db, oferta, **overrides):
     data = make_history(**overrides)

@@ -48,3 +48,11 @@ npm install
 ```
 npm run dev
 ```
+
+### Para rodar os testes
+
+###### Execute o comando para rodar o script de fake data
+```
+cd backend
+python .\backend\app\test\builder\seed.py
+```
