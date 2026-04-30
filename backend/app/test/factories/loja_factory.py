@@ -1,4 +1,5 @@
 from faker import Faker
+from app.models.loja import Loja
 
 fake = Faker('pt_BR')
 
@@ -18,3 +19,17 @@ def make_loja(nome_length=None, url_base_length=None, **overrides):
         "url_base": url_base,
         **overrides
     }
+
+def create_loja(db, **overrides):
+    data = make_loja(**overrides)
+
+    loja = Loja(
+        nome=data["nome"],
+        url_base=data["url_base"]
+    )
+
+    db.add(loja)
+    db.commit()
+    db.refresh(loja)
+
+    return loja
