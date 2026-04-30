@@ -5,10 +5,10 @@ from app.core.database import get_session
 from app.models.historico import Historico
 
 class HistoricoService:
-    def __init__():
+    def __init__(self):
         pass
 
-    def criar_historico(historico: Historico, session: Session = Depends(get_session)):
+    def criar_historico(self, historico: Historico, session: Session = Depends(get_session)):
         """
         Cria um novo registro de histórico de preço.
         
@@ -21,7 +21,7 @@ class HistoricoService:
         session.refresh(historico)
         return historico
     
-    def listar_historico(session: Session = Depends(get_session)):
+    def listar_historico(self, session: Session = Depends(get_session)):
         """
         Retorna todos os registros de histórico.
         """
@@ -29,7 +29,7 @@ class HistoricoService:
         historicos = session.exec(statement).all()
         return historicos
     
-    def buscar_historico(historico_id: int, session: Session = Depends(get_session)):
+    def buscar_historico(self, historico_id: int, session: Session = Depends(get_session)):
         """
         Busca um registro de histórico específico por ID.
         
@@ -43,6 +43,7 @@ class HistoricoService:
         return historico
     
     def atualizar_historico(
+        self,
         historico_id: int,
         historico_atualizado: Historico,
         session: Session = Depends(get_session)
@@ -69,7 +70,7 @@ class HistoricoService:
         session.refresh(historico)
         return historico
     
-    def deletar_historico(historico_id: int, session: Session = Depends(get_session)):
+    def deletar_historico(self, historico_id: int, session: Session = Depends(get_session)):
         """
         Deleta um registro de histórico do banco de dados.
         

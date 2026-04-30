@@ -6,10 +6,10 @@ from app.models.categoria import Categoria
 
 
 class CategoriaService:
-    def __init__():
+    def __init__(self):
         pass
 
-    def criar_categoria(categoria: Categoria, session: Session = Depends(get_session)):
+    def criar_categoria(self, categoria: Categoria, session: Session = Depends(get_session)):
         """
         Cria uma nova categoria no banco de dados.
         
@@ -20,7 +20,7 @@ class CategoriaService:
         session.refresh(categoria)  
         return categoria
     
-    def listar_categorias(session: Session = Depends(get_session)):
+    def listar_categorias(self, session: Session = Depends(get_session)):
         """
         Retorna todas as categorias cadastradas.
         """
@@ -28,7 +28,7 @@ class CategoriaService:
         categorias = session.exec(statement).all()
         return categorias
     
-    def buscar_categoria(categoria_id: int, session: Session = Depends(get_session)):
+    def buscar_categoria(self, categoria_id: int, session: Session = Depends(get_session)):
         """
         Busca uma categoria específica por ID.
         
@@ -42,6 +42,7 @@ class CategoriaService:
         return categoria
     
     def atualizar_categoria(
+        self,
         categoria_id: int,
         categoria_atualizada: Categoria,
         session: Session = Depends(get_session)
@@ -64,7 +65,7 @@ class CategoriaService:
         session.refresh(categoria)
         return categoria
     
-    def deletar_categoria(categoria_id: int, session: Session = Depends(get_session)):
+    def deletar_categoria(self, categoria_id: int, session: Session = Depends(get_session)):
         """
         Deleta uma categoria do banco de dados.
         
