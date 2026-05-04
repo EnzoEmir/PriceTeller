@@ -1,7 +1,9 @@
 export default function BenefitsSection() {
   return (
-    <section>
-      <div className="h-screen w-screen bg-[#f5f5f5]"></div>
+    <section className="section-light">
+      <div className="container-max">
+        {/* COLOCAR DEPOIS */}
+      </div>
     </section>
   );
 }

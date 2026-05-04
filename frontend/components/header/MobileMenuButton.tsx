@@ -13,16 +13,15 @@ export default function MobileMenuButton(){
         aria-expanded={open}
         aria-controls="mobile-menu"
         onClick={() => setOpen(!open)}
-        className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-2xl"
       >
         ☰
       </button>
    
-      {/* Menu */}
       {open && (
         <div
           id="mobile-menu"
-          className="absolute left-0 top-16 w-full bg-white border-b shadow-md"
+          className="absolute left-0 top-16 w-full bg-black border-b shadow-md"
         >
           <nav className="flex flex-col p-4 gap-4">
             {headerLinks.map((link) => (
@@ -30,7 +29,7 @@ export default function MobileMenuButton(){
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="transition-colors"
               >
                 {link.label}
               </Link>

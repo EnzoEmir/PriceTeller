@@ -10,7 +10,7 @@ export default function DesktopNav(){
         <Link
           key={link.href}
           href={link.href}
-          className="text-sm font-medium text-white-700 hover:text-blue-600 transition-colors"
+          className="text-sm font-medium transition-colors"
         >
           {link.label}
         </Link>

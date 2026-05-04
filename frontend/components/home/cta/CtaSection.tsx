@@ -1,7 +1,9 @@
 export default function CtaSection() {
   return (
-    <section>
-      <div className="h-screen w-screen bg-[#333129]"></div>
+    <section className="section bg-gray-900">
+      <div className="container-max">
+        {/* COLOCAR DEPOIS */}
+      </div>
     </section>
   );
 }
