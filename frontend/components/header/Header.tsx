@@ -1,4 +1,4 @@
-import Logo from "./Logo"
+import Logo from "./Logo";
 import DesktopNav from "./DesktopNav";
 import MobileMenuButton from "./MobileMenuButton";
 

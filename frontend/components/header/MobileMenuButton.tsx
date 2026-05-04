@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
-const links = [
-  { href: "/", label: "Página Inical" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "Sobre Nós" },
-];
+import { headerLinks } from "./links";
 
 export default function MobileMenuButton(){
     const [open, setOpen] = useState(false);
@@ -30,7 +25,7 @@ export default function MobileMenuButton(){
           className="absolute left-0 top-16 w-full bg-white border-b shadow-md"
         >
           <nav className="flex flex-col p-4 gap-4">
-            {links.map((link) => (
+            {headerLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

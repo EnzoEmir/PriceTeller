@@ -1,17 +1,12 @@
 import Link from "next/link";
+import { headerLinks } from "./links";
 
 
 export default function DesktopNav(){
 
-    const links = [
-        { href: "/", label: "Página Inicial" },
-        { href: "/pricing", label: "Planos" },
-        { href: "/about", label: "Sobre Nós" },
-    ];
-
     return (
     <nav className="hidden md:flex items-center gap-6">
-      {links.map((link) => (
+      {headerLinks.map((link) => (
         <Link
           key={link.href}
           href={link.href}
