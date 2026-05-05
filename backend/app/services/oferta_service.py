@@ -6,10 +6,10 @@ from app.models.oferta import Oferta
 
 
 class OfertaService:
-    def __init__():
+    def __init__(self):
         pass
 
-    def criar_oferta(oferta: Oferta, session: Session = Depends(get_session)):
+    def criar_oferta(self, oferta: Oferta, session: Session = Depends(get_session)):
         """
         Cria uma nova oferta no banco de dados.
         
@@ -23,7 +23,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def listar_ofertas(session: Session = Depends(get_session)):
+    def listar_ofertas(self, session: Session = Depends(get_session)):
         """
         Retorna todas as ofertas cadastradas.
         """
@@ -31,7 +31,7 @@ class OfertaService:
         ofertas = session.exec(statement).all()
         return ofertas
     
-    def buscar_oferta(oferta_id: int, session: Session = Depends(get_session)):
+    def buscar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
         """
         Busca uma oferta específica por ID.
         
@@ -45,6 +45,7 @@ class OfertaService:
         return oferta
     
     def atualizar_oferta(
+        self,
         oferta_id: int,
         oferta_atualizada: Oferta,
         session: Session = Depends(get_session)
@@ -73,7 +74,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def deletar_oferta(oferta_id: int, session: Session = Depends(get_session)):
+    def deletar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
         """
         Deleta uma oferta do banco de dados.
         
