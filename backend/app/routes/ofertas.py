@@ -17,7 +17,7 @@ def criar_oferta(oferta: Oferta, session: Session = Depends(get_session)):
 
 @router.get("/", response_model=List[Oferta])
 def listar_ofertas(session: Session = Depends(get_session)):
-    return servicoOferta.criar_oferta(session)
+    return servicoOferta.listar_ofertas(session)
 
 
 @router.get("/{oferta_id}", response_model=Oferta)
@@ -31,7 +31,7 @@ def atualizar_oferta(
         oferta_atualizada: Oferta,
         session: Session = Depends(get_session)
     ):
-        return servicoOferta(oferta_id, oferta_atualizada, session)
+    return servicoOferta.atualizar_oferta(oferta_id, oferta_atualizada, session)
 
 
 @router.delete("/{oferta_id}", status_code=204)

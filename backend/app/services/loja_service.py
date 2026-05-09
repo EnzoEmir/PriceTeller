@@ -6,7 +6,7 @@ from app.models.loja import Loja
 
 
 class LojaService:
-    def criar_loja(loja: Loja, session: Session = Depends(get_session)):
+    def criar_loja(self, loja: Loja, session: Session = Depends(get_session)):
         """
         Cria uma nova loja no banco de dados.
         
@@ -18,7 +18,7 @@ class LojaService:
         session.refresh(loja)
         return loja
     
-    def listar_lojas(session: Session = Depends(get_session)):
+    def listar_lojas(self, session: Session = Depends(get_session)):
         """
         Retorna todas as lojas cadastradas.
         """
@@ -26,7 +26,7 @@ class LojaService:
         lojas = session.exec(statement).all()
         return lojas
     
-    def buscar_loja(loja_id: int, session: Session = Depends(get_session)):
+    def buscar_loja(self, loja_id: int, session: Session = Depends(get_session)):
         """
         Busca uma loja específica por ID.
         
@@ -40,6 +40,7 @@ class LojaService:
         return loja
     
     def atualizar_loja(
+        self,
         loja_id: int,
         loja_atualizada: Loja,
         session: Session = Depends(get_session)
@@ -64,7 +65,7 @@ class LojaService:
         session.refresh(loja)
         return loja
     
-    def deletar_loja(loja_id: int, session: Session = Depends(get_session)):
+    def deletar_loja(self, loja_id: int, session: Session = Depends(get_session)):
         """
         Deleta uma loja do banco de dados.
         

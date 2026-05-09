@@ -6,10 +6,10 @@ from app.models.produto import Produto
 
 
 class ProdutoService:
-    def __init__():
+    def __init__(self):
         pass
 
-    def criar_produto(produto: Produto, session: Session = Depends(get_session)):
+    def criar_produto(self, produto: Produto, session: Session = Depends(get_session)):
         """
         Cria um novo produto no banco de dados.
         
@@ -23,7 +23,7 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def listar_produtos(session: Session = Depends(get_session)):
+    def listar_produtos(self, session: Session = Depends(get_session)):
         """
         Retorna todos os produtos cadastrados.
         """
@@ -31,7 +31,7 @@ class ProdutoService:
         produtos = session.exec(statement).all()
         return produtos
     
-    def buscar_produto(produto_id: int, session: Session = Depends(get_session)):
+    def buscar_produto(self, produto_id: int, session: Session = Depends(get_session)):
         """
         Busca um produto específico por ID.
         
@@ -45,6 +45,7 @@ class ProdutoService:
         return produto
     
     def atualizar_produto(
+        self,
         produto_id: int,
         produto_atualizado: Produto,
         session: Session = Depends(get_session)
@@ -73,7 +74,7 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def deletar_produto(produto_id: int, session: Session = Depends(get_session)):
+    def deletar_produto(self, produto_id: int, session: Session = Depends(get_session)):
         """
         Deleta um produto do banco de dados.
         
