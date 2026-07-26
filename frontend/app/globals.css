@@ -93,6 +93,14 @@ a:hover {
   color: #ffffff;
 }
 
+.site-footer a {
+  color: var(--color-gray-400);
+}
+
+.site-footer a:hover {
+  color: #ffffff;
+}
+
 .container-max {
   @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }
