@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -30,10 +31,16 @@ class Settings(BaseSettings):
     
     # Environment
     environment: str = Field(
-        default="development", 
+        default="development",
         description="Application environment (development, production, etc)"
     )
-    
+
+    # Lomadee
+    lomadee_api_key: Optional[str] = Field(
+        default=None,
+        description="x-api-key para a API de afiliados da Lomadee"
+    )
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
