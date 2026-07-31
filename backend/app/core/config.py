@@ -4,31 +4,39 @@ from typing import Optional
 
 
 class Settings(BaseSettings):
-    
+
     """ Configurações da aplicação carregadas de variáveis de ambiente. """
-    
+
     # Database
     database_url: str = Field(
-        ..., 
-        description="PostgreSQL connection URL"
+        default="sqlite:///./database.db",
+        description="Database connection URL"
     )
-    
+    sql_echo: bool = Field(
+        default=False,
+        description="Loga no console o SQL gerado pelo SQLAlchemy"
+    )
+
     # API
     api_host: str = Field(
-        default="0.0.0.0", 
+        default="0.0.0.0",
         description="API host address"
     )
     api_port: int = Field(
-        default=8000, 
+        default=8000,
         description="API port"
     )
-    
+    cors_origins: list[str] = Field(
+        default=["http://localhost:3000"],
+        description="Origens autorizadas a chamar a API"
+    )
+
     # Security
     secret_key: str = Field(
-        ..., 
+        default="dev-only-trocar-em-producao",
         description="Secret key for authentication"
     )
-    
+
     # Environment
     environment: str = Field(
         default="development",
