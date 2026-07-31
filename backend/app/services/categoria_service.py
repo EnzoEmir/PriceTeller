@@ -1,15 +1,11 @@
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
 from app.models.categoria import Categoria
 
 
 class CategoriaService:
-    def __init__(self):
-        pass
-
-    def criar_categoria(self, categoria: Categoria, session: Session = Depends(get_session)):
+    def criar_categoria(self, categoria: Categoria, session: Session):
         """
         Cria uma nova categoria no banco de dados.
         
@@ -20,7 +16,7 @@ class CategoriaService:
         session.refresh(categoria)  
         return categoria
     
-    def listar_categorias(self, session: Session = Depends(get_session)):
+    def listar_categorias(self, session: Session):
         """
         Retorna todas as categorias cadastradas.
         """
@@ -28,7 +24,7 @@ class CategoriaService:
         categorias = session.exec(statement).all()
         return categorias
     
-    def buscar_categoria(self, categoria_id: int, session: Session = Depends(get_session)):
+    def buscar_categoria(self, categoria_id: int, session: Session):
         """
         Busca uma categoria específica por ID.
         
@@ -45,7 +41,7 @@ class CategoriaService:
         self,
         categoria_id: int,
         categoria_atualizada: Categoria,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza uma categoria existente.
@@ -65,7 +61,7 @@ class CategoriaService:
         session.refresh(categoria)
         return categoria
     
-    def deletar_categoria(self, categoria_id: int, session: Session = Depends(get_session)):
+    def deletar_categoria(self, categoria_id: int, session: Session):
         """
         Deleta uma categoria do banco de dados.
         

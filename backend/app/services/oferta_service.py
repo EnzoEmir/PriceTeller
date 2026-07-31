@@ -1,15 +1,11 @@
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
 from app.models.oferta import Oferta
 
 
 class OfertaService:
-    def __init__(self):
-        pass
-
-    def criar_oferta(self, oferta: Oferta, session: Session = Depends(get_session)):
+    def criar_oferta(self, oferta: Oferta, session: Session):
         """
         Cria uma nova oferta no banco de dados.
         
@@ -23,7 +19,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def listar_ofertas(self, session: Session = Depends(get_session)):
+    def listar_ofertas(self, session: Session):
         """
         Retorna todas as ofertas cadastradas.
         """
@@ -31,7 +27,7 @@ class OfertaService:
         ofertas = session.exec(statement).all()
         return ofertas
     
-    def buscar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
+    def buscar_oferta(self, oferta_id: int, session: Session):
         """
         Busca uma oferta específica por ID.
         
@@ -48,7 +44,7 @@ class OfertaService:
         self,
         oferta_id: int,
         oferta_atualizada: Oferta,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza uma oferta existente.
@@ -74,7 +70,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def deletar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
+    def deletar_oferta(self, oferta_id: int, session: Session):
         """
         Deleta uma oferta do banco de dados.
         

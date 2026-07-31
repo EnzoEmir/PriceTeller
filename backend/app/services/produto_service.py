@@ -1,15 +1,11 @@
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
 from app.models.produto import Produto
 
 
 class ProdutoService:
-    def __init__(self):
-        pass
-
-    def criar_produto(self, produto: Produto, session: Session = Depends(get_session)):
+    def criar_produto(self, produto: Produto, session: Session):
         """
         Cria um novo produto no banco de dados.
         
@@ -23,7 +19,7 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def listar_produtos(self, session: Session = Depends(get_session)):
+    def listar_produtos(self, session: Session):
         """
         Retorna todos os produtos cadastrados.
         """
@@ -31,7 +27,7 @@ class ProdutoService:
         produtos = session.exec(statement).all()
         return produtos
     
-    def buscar_produto(self, produto_id: int, session: Session = Depends(get_session)):
+    def buscar_produto(self, produto_id: int, session: Session):
         """
         Busca um produto específico por ID.
         
@@ -48,7 +44,7 @@ class ProdutoService:
         self,
         produto_id: int,
         produto_atualizado: Produto,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza um produto existente.
@@ -74,7 +70,7 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def deletar_produto(self, produto_id: int, session: Session = Depends(get_session)):
+    def deletar_produto(self, produto_id: int, session: Session):
         """
         Deleta um produto do banco de dados.
         

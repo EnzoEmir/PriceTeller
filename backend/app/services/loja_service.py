@@ -1,12 +1,11 @@
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
 from app.models.loja import Loja
 
 
 class LojaService:
-    def criar_loja(self, loja: Loja, session: Session = Depends(get_session)):
+    def criar_loja(self, loja: Loja, session: Session):
         """
         Cria uma nova loja no banco de dados.
         
@@ -18,7 +17,7 @@ class LojaService:
         session.refresh(loja)
         return loja
     
-    def listar_lojas(self, session: Session = Depends(get_session)):
+    def listar_lojas(self, session: Session):
         """
         Retorna todas as lojas cadastradas.
         """
@@ -26,7 +25,7 @@ class LojaService:
         lojas = session.exec(statement).all()
         return lojas
     
-    def buscar_loja(self, loja_id: int, session: Session = Depends(get_session)):
+    def buscar_loja(self, loja_id: int, session: Session):
         """
         Busca uma loja específica por ID.
         
@@ -43,7 +42,7 @@ class LojaService:
         self,
         loja_id: int,
         loja_atualizada: Loja,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza uma loja existente.
@@ -65,7 +64,7 @@ class LojaService:
         session.refresh(loja)
         return loja
     
-    def deletar_loja(self, loja_id: int, session: Session = Depends(get_session)):
+    def deletar_loja(self, loja_id: int, session: Session):
         """
         Deleta uma loja do banco de dados.
         
