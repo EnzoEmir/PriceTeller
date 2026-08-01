@@ -1,10 +1,13 @@
+from decimal import Decimal
 from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy import String, and_, cast, func, or_
 from sqlmodel import Session, select
 
+from app.models.oferta import Oferta
 from app.models.produto import Produto
+from app.schemas.produto import OrdenacaoProduto
 
 
 def _filtro_texto(termo_busca: str):
@@ -25,6 +28,32 @@ def _filtro_texto(termo_busca: str):
         )
 
     return and_(*condicoes)
+
+
+def _subquery_menor_preco():
+    return (
+        select(
+            Oferta.fk_produto_id.label("produto_id"),
+            func.min(Oferta.preco_atual).label("menor_preco"),
+        )
+        .group_by(Oferta.fk_produto_id)
+        .subquery()
+    )
+
+
+def _ordenacao(ordenar: OrdenacaoProduto, menor_preco):
+    # produto sem oferta tem menor_preco nulo; o IS NULL joga esses para o fim
+    # nas duas direções, em vez de deixar a ordem por conta do banco
+    if ordenar == OrdenacaoProduto.menor_preco:
+        return [menor_preco.is_(None), menor_preco.asc(), Produto.id]
+
+    if ordenar == OrdenacaoProduto.maior_preco:
+        return [menor_preco.is_(None), menor_preco.desc(), Produto.id]
+
+    if ordenar == OrdenacaoProduto.nome:
+        return [Produto.marca, Produto.modelo, Produto.id]
+
+    return [Produto.id]
 
 
 class ProdutoService:
@@ -49,16 +78,26 @@ class ProdutoService:
         limit: int = 20,
         q: Optional[str] = None,
         categoria_id: Optional[int] = None,
+        preco_min: Optional[Decimal] = None,
+        preco_max: Optional[Decimal] = None,
+        ordenar: OrdenacaoProduto = OrdenacaoProduto.padrao,
     ):
         """
         Retorna uma página de produtos e o total de registros que passam no filtro.
+
+        Preço e ordenação usam sempre a oferta mais barata do produto.
 
         - **page**: número da página, começando em 1
         - **limit**: quantidade de produtos por página
         - **q**: texto buscado em marca, modelo e termos de busca
         - **categoria_id**: restringe a uma categoria
+        - **preco_min** / **preco_max**: faixa de preço da oferta mais barata
+        - **ordenar**: padrao, menor_preco, maior_preco ou nome
         """
-        statement = select(Produto)
+        precos = _subquery_menor_preco()
+        menor_preco = precos.c.menor_preco
+
+        statement = select(Produto).outerjoin(precos, precos.c.produto_id == Produto.id)
 
         if q and q.strip():
             statement = statement.where(_filtro_texto(q))
@@ -66,9 +105,17 @@ class ProdutoService:
         if categoria_id is not None:
             statement = statement.where(Produto.fk_categoria_id == categoria_id)
 
+        if preco_min is not None:
+            statement = statement.where(menor_preco >= preco_min)
+
+        if preco_max is not None:
+            statement = statement.where(menor_preco <= preco_max)
+
         total = session.exec(select(func.count()).select_from(statement.subquery())).one()
         produtos = session.exec(
-            statement.order_by(Produto.id).offset((page - 1) * limit).limit(limit)
+            statement.order_by(*_ordenacao(ordenar, menor_preco))
+            .offset((page - 1) * limit)
+            .limit(limit)
         ).all()
         return produtos, total
     

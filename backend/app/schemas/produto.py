@@ -1,8 +1,16 @@
+from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from sqlmodel import SQLModel
 
 from app.schemas.oferta import ResumoOfertas
+
+
+class OrdenacaoProduto(str, Enum):
+    padrao = "padrao"
+    menor_preco = "menor_preco"
+    maior_preco = "maior_preco"
+    nome = "nome"
 
 
 class ProdutoBase(SQLModel):

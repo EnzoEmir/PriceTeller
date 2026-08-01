@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Query
@@ -6,7 +7,13 @@ from sqlmodel import Session
 from app.core.database import get_session
 from app.models.produto import Produto
 from app.schemas.pagina import Pagina
-from app.schemas.produto import ProdutoComOfertas, ProdutoCreate, ProdutoRead, ProdutoUpdate
+from app.schemas.produto import (
+    OrdenacaoProduto,
+    ProdutoComOfertas,
+    ProdutoCreate,
+    ProdutoRead,
+    ProdutoUpdate,
+)
 from app.services.oferta_service import OfertaService
 from app.services.produto_service import ProdutoService
 
@@ -26,9 +33,14 @@ def listar_produtos(
     limit: int = Query(20, ge=1, le=100, description="Produtos por página"),
     q: Optional[str] = Query(None, description="Busca em marca, modelo e termos de busca"),
     categoria_id: Optional[int] = Query(None, description="Filtra por categoria"),
+    preco_min: Optional[Decimal] = Query(None, ge=0, description="Preço mínimo da oferta mais barata"),
+    preco_max: Optional[Decimal] = Query(None, ge=0, description="Preço máximo da oferta mais barata"),
+    ordenar: OrdenacaoProduto = Query(OrdenacaoProduto.padrao, description="Ordem dos resultados"),
     session: Session = Depends(get_session),
 ):
-    produtos, total = servicoProduto.listar_produtos(session, page, limit, q, categoria_id)
+    produtos, total = servicoProduto.listar_produtos(
+        session, page, limit, q, categoria_id, preco_min, preco_max, ordenar
+    )
     resumos = servicoOferta.resumo_por_produto(session, [p.id for p in produtos])
     items = [ProdutoComOfertas.montar(p, resumos.get(p.id)) for p in produtos]
     return Pagina.criar(items=items, total=total, page=page, limit=limit)
