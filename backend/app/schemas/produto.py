@@ -2,6 +2,8 @@ from typing import Any, Dict, List, Optional
 
 from sqlmodel import SQLModel
 
+from app.schemas.oferta import ResumoOfertas
+
 
 class ProdutoBase(SQLModel):
     fk_categoria_id: int
@@ -22,3 +24,10 @@ class ProdutoUpdate(ProdutoBase):
 
 class ProdutoRead(ProdutoBase):
     id: int
+
+
+class ProdutoComOfertas(ProdutoRead, ResumoOfertas):
+    @classmethod
+    def montar(cls, produto, resumo: Optional[ResumoOfertas] = None) -> "ProdutoComOfertas":
+        resumo = resumo or ResumoOfertas()
+        return cls(**produto.model_dump(), **resumo.model_dump())

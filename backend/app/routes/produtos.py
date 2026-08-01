@@ -6,19 +6,21 @@ from sqlmodel import Session
 from app.core.database import get_session
 from app.models.produto import Produto
 from app.schemas.pagina import Pagina
-from app.schemas.produto import ProdutoCreate, ProdutoRead, ProdutoUpdate
+from app.schemas.produto import ProdutoComOfertas, ProdutoCreate, ProdutoRead, ProdutoUpdate
+from app.services.oferta_service import OfertaService
 from app.services.produto_service import ProdutoService
 
 router = APIRouter(prefix="/produtos", tags=["Produtos"])
 
 servicoProduto = ProdutoService()
+servicoOferta = OfertaService()
 
 @router.post("/", response_model=ProdutoRead, status_code=201)
 def criar_produto(produto: ProdutoCreate, session: Session = Depends(get_session)):
     return servicoProduto.criar_produto(Produto(**produto.model_dump()), session)
 
 
-@router.get("/", response_model=Pagina[ProdutoRead])
+@router.get("/", response_model=Pagina[ProdutoComOfertas])
 def listar_produtos(
     page: int = Query(1, ge=1, description="Número da página, começando em 1"),
     limit: int = Query(20, ge=1, le=100, description="Produtos por página"),
@@ -27,7 +29,9 @@ def listar_produtos(
     session: Session = Depends(get_session),
 ):
     produtos, total = servicoProduto.listar_produtos(session, page, limit, q, categoria_id)
-    return Pagina.criar(items=produtos, total=total, page=page, limit=limit)
+    resumos = servicoOferta.resumo_por_produto(session, [p.id for p in produtos])
+    items = [ProdutoComOfertas.montar(p, resumos.get(p.id)) for p in produtos]
+    return Pagina.criar(items=items, total=total, page=page, limit=limit)
 
 
 @router.get("/{produto_id}", response_model=ProdutoRead)

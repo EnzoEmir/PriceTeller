@@ -1,10 +1,46 @@
+from typing import Sequence
+
 from fastapi import HTTPException
 from sqlmodel import Session, select
 
+from app.models.loja import Loja
 from app.models.oferta import Oferta
+from app.schemas.oferta import MelhorOferta, ResumoOfertas
 
 
 class OfertaService:
+    def resumo_por_produto(
+        self, session: Session, produto_ids: Sequence[int]
+    ) -> dict[int, ResumoOfertas]:
+        """
+        Menor preço e quantidade de ofertas de cada produto informado.
+
+        Busca tudo numa query só para a listagem não disparar uma consulta por produto.
+        """
+        if not produto_ids:
+            return {}
+
+        linhas = session.exec(
+            select(Oferta, Loja.nome)
+            .join(Loja, Loja.id == Oferta.fk_loja_id)
+            .where(Oferta.fk_produto_id.in_(produto_ids))
+        ).all()
+
+        resumos: dict[int, ResumoOfertas] = {}
+
+        for oferta, loja_nome in linhas:
+            resumo = resumos.setdefault(oferta.fk_produto_id, ResumoOfertas())
+            resumo.total_ofertas += 1
+
+            if resumo.melhor_oferta is None or oferta.preco_atual < resumo.melhor_oferta.preco:
+                resumo.melhor_oferta = MelhorOferta(
+                    loja_id=oferta.fk_loja_id,
+                    loja_nome=loja_nome,
+                    preco=oferta.preco_atual,
+                    url_link=oferta.url_link,
+                )
+
+        return resumos
     def criar_oferta(self, oferta: Oferta, session: Session):
         """
         Cria uma nova oferta no banco de dados.
