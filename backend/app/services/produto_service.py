@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlmodel import Session, select
 
 from app.models.produto import Produto
@@ -19,13 +20,18 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def listar_produtos(self, session: Session):
+    def listar_produtos(self, session: Session, page: int = 1, limit: int = 20):
         """
-        Retorna todos os produtos cadastrados.
+        Retorna uma página de produtos e o total de registros.
+
+        - **page**: número da página, começando em 1
+        - **limit**: quantidade de produtos por página
         """
-        statement = select(Produto)
-        produtos = session.exec(statement).all()
-        return produtos
+        total = session.exec(select(func.count()).select_from(Produto)).one()
+        produtos = session.exec(
+            select(Produto).order_by(Produto.id).offset((page - 1) * limit).limit(limit)
+        ).all()
+        return produtos, total
     
     def buscar_produto(self, produto_id: int, session: Session):
         """

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
-from typing import List
 
 from app.core.database import get_session
 from app.models.produto import Produto
+from app.schemas.pagina import Pagina
 from app.schemas.produto import ProdutoCreate, ProdutoRead, ProdutoUpdate
 from app.services.produto_service import ProdutoService
 
@@ -16,9 +16,14 @@ def criar_produto(produto: ProdutoCreate, session: Session = Depends(get_session
     return servicoProduto.criar_produto(Produto(**produto.model_dump()), session)
 
 
-@router.get("/", response_model=List[ProdutoRead])
-def listar_produtos(session: Session = Depends(get_session)):
-    return servicoProduto.listar_produtos(session)
+@router.get("/", response_model=Pagina[ProdutoRead])
+def listar_produtos(
+    page: int = Query(1, ge=1, description="Número da página, começando em 1"),
+    limit: int = Query(20, ge=1, le=100, description="Produtos por página"),
+    session: Session = Depends(get_session),
+):
+    produtos, total = servicoProduto.listar_produtos(session, page, limit)
+    return Pagina.criar(items=produtos, total=total, page=page, limit=limit)
 
 
 @router.get("/{produto_id}", response_model=ProdutoRead)
