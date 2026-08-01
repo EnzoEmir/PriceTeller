@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 
@@ -20,9 +22,11 @@ def criar_produto(produto: ProdutoCreate, session: Session = Depends(get_session
 def listar_produtos(
     page: int = Query(1, ge=1, description="Número da página, começando em 1"),
     limit: int = Query(20, ge=1, le=100, description="Produtos por página"),
+    q: Optional[str] = Query(None, description="Busca em marca, modelo e termos de busca"),
+    categoria_id: Optional[int] = Query(None, description="Filtra por categoria"),
     session: Session = Depends(get_session),
 ):
-    produtos, total = servicoProduto.listar_produtos(session, page, limit)
+    produtos, total = servicoProduto.listar_produtos(session, page, limit, q, categoria_id)
     return Pagina.criar(items=produtos, total=total, page=page, limit=limit)
 
 

@@ -1,8 +1,30 @@
+from typing import Optional
+
 from fastapi import HTTPException
-from sqlalchemy import func
+from sqlalchemy import String, and_, cast, func, or_
 from sqlmodel import Session, select
 
 from app.models.produto import Produto
+
+
+def _filtro_texto(termo_busca: str):
+    """
+    Cada palavra digitada precisa aparecer em algum campo, o que faz
+    'ryzen 5700' casar sem exigir que o usuário acerte o nome inteiro.
+    """
+    condicoes = []
+
+    for palavra in termo_busca.split():
+        padrao = f"%{palavra}%"
+        condicoes.append(
+            or_(
+                Produto.marca.ilike(padrao),
+                Produto.modelo.ilike(padrao),
+                cast(Produto.termos_busca, String).ilike(padrao),
+            )
+        )
+
+    return and_(*condicoes)
 
 
 class ProdutoService:
@@ -20,16 +42,33 @@ class ProdutoService:
         session.refresh(produto)
         return produto
     
-    def listar_produtos(self, session: Session, page: int = 1, limit: int = 20):
+    def listar_produtos(
+        self,
+        session: Session,
+        page: int = 1,
+        limit: int = 20,
+        q: Optional[str] = None,
+        categoria_id: Optional[int] = None,
+    ):
         """
-        Retorna uma página de produtos e o total de registros.
+        Retorna uma página de produtos e o total de registros que passam no filtro.
 
         - **page**: número da página, começando em 1
         - **limit**: quantidade de produtos por página
+        - **q**: texto buscado em marca, modelo e termos de busca
+        - **categoria_id**: restringe a uma categoria
         """
-        total = session.exec(select(func.count()).select_from(Produto)).one()
+        statement = select(Produto)
+
+        if q and q.strip():
+            statement = statement.where(_filtro_texto(q))
+
+        if categoria_id is not None:
+            statement = statement.where(Produto.fk_categoria_id == categoria_id)
+
+        total = session.exec(select(func.count()).select_from(statement.subquery())).one()
         produtos = session.exec(
-            select(Produto).order_by(Produto.id).offset((page - 1) * limit).limit(limit)
+            statement.order_by(Produto.id).offset((page - 1) * limit).limit(limit)
         ).all()
         return produtos, total
     
