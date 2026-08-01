@@ -53,6 +53,8 @@ class ProdutoService:
         - **fk_categoria_id**: Nova categoria
         - **marca**: Nova marca
         - **modelo**: Novo modelo
+        - **ean**: Novo código de barras
+        - **termos_busca**: Novos nomes alternativos
         - **specs**: Novas especificações (JSON)
         """
         produto = session.get(Produto, produto_id)
@@ -63,6 +65,8 @@ class ProdutoService:
         produto.fk_categoria_id = produto_atualizado.fk_categoria_id
         produto.marca = produto_atualizado.marca
         produto.modelo = produto_atualizado.modelo
+        produto.ean = produto_atualizado.ean
+        produto.termos_busca = produto_atualizado.termos_busca
         produto.specs = produto_atualizado.specs
         
         session.add(produto)
