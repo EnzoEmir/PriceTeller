@@ -40,3 +40,14 @@ class ScenarioBuilder:
             "ofertas": ofertas,
             "historicos": historicos
         }
+
+    def only_categorias(self):
+        try:
+            categorias = [create_categoria(self.db) for _ in range(3)]
+            return {
+                "categorias": categorias
+            }
+        except Exception as e:
+            print(f"Erro: {e}")
+            raise
+
