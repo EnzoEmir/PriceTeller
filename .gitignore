@@ -15,6 +15,11 @@ dist/
 build/
 *.egg-info/
 
+# Bancos de dados locais (dev/seed)
+*.db
+*.sqlite
+*.sqlite3
+
 # ==========================================
 # Node.js / npm / yarn
 # ==========================================
