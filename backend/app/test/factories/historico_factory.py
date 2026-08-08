@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from faker import Faker
 from app.test.factories.oferta_factory import make_oferta
 from app.models.historico import Historico
@@ -11,7 +13,7 @@ def make_history(oferta=None, **overrides):
     return {
         # "id": fake.random_int(min=1, max=10000), #task: tirar id de factories e colocar em builders
         "preco": fake.pyfloat(left_digits=4, right_digits=2, positive=True, min_value=10.0, max_value=5000.0),
-        "data": fake.date_between(start_date='-5y', end_date='today'),
+        "data": fake.date_time_between(start_date='-5y', end_date='now', tzinfo=timezone.utc),
         # "fk_oferta_id": oferta["id"], #task: verificar como relacionar a oferta com produto em factory
         **overrides
     }
@@ -22,6 +24,7 @@ def create_historico(db, oferta, **overrides):
     historico = Historico(
         fk_oferta_id=oferta.id,
         preco=data["preco"],
+        data=data["data"],
     )
 
     db.add(historico)

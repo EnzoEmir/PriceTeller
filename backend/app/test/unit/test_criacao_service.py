@@ -22,10 +22,7 @@ from app.test.factories.historico_factory import make_history
 fake = Faker('pt_BR')
 from sqlmodel import Session
 
-from app.core.database import engine, criar_tabelas, DATABASE_URL
-print("==== hello ====")
-print(DATABASE_URL)
-print(engine.url)
+from app.core.database import engine, criar_tabelas
 criar_tabelas()
 
 def get_session():

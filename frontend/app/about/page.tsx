@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sobre Nós",
+  description: "Quem faz o PriceTeller e com que tecnologia ele é construído.",
 };
 
 const criadores = [
@@ -27,73 +28,86 @@ const stack = [
 export default function SobreNos() {
   return (
     <main>
-      <section className="section">
-        <div className="container-max flex flex-col items-center text-center">
-          <div className="mx-auto max-w-3xl">
-            <h1>Sobre Nós</h1>
-            <p className="mt-4 text-lg text-gray-600">
-              O PriceTeller é uma ferramenta para montar configurações de PC e comparar os
-              preços das peças em tempo real. Ele reúne num só lugar o preço de componentes como
-              processador, placa de vídeo, memória e fonte de diferentes lojas, pra você montar
-              seu setup e ver o custo total. No futuro, também vai avisar sobre incompatibilidades
-              entre as peças.
-            </p>
-          </div>
+      <header className="border-b border-rule">
+        <div className="container-max py-20 md:py-28">
+          <span className="kicker">Sobre</span>
+          <h1 className="mt-4 max-w-3xl">O PriceTeller.</h1>
+          <p className="mt-6 max-w-2xl text-lg">
+            O PriceTeller reúne num só lugar o preço de processador, placa de vídeo, memória e
+            fonte em lojas diferentes, pra você montar seu setup e ver o custo total. No futuro
+            também vai avisar sobre incompatibilidade entre as peças.
+          </p>
         </div>
-      </section>
+      </header>
 
-      <section className="section-light">
-        <div className="container-max flex flex-col items-center text-center">
-          <h2>Quem faz o PriceTeller</h2>
-          <div className="mt-8 grid w-full max-w-2xl gap-6 sm:grid-cols-2">
+      <section className="section-alt">
+        <div className="container-max">
+          <span className="kicker">Quem faz</span>
+
+          <div className="mt-8 grid gap-px border border-rule bg-rule sm:grid-cols-2">
             {criadores.map((criador) => (
-              <div key={criador.nome} className="card flex flex-col items-center text-center">
+              <article key={criador.nome} className="flex items-center gap-5 bg-paper p-7">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`${criador.github}.png?size=200`}
-                  alt={criador.nome}
-                  width={96}
-                  height={96}
+                  src={`${criador.github}.png?size=160`}
+                  alt=""
+                  width={72}
+                  height={72}
                   loading="lazy"
-                  className="h-24 w-24 rounded-full object-cover"
+                  className="h-18 w-18 shrink-0 border border-rule"
                 />
-                <span className="mt-4 font-display text-lg font-bold tracking-tight text-gray-900">
-                  {criador.nome}
-                </span>
-                <span className="mt-2 flex items-center gap-2 text-sm">
-                  <a href={criador.github} target="_blank" rel="noopener noreferrer">
-                    GitHub
-                  </a>
-                  <span aria-hidden="true" className="text-gray-300">·</span>
-                  <a href={criador.linkedin} target="_blank" rel="noopener noreferrer">
-                    LinkedIn
-                  </a>
-                </span>
-              </div>
+                <div>
+                  <span className="block font-display text-lg font-bold tracking-tight">
+                    {criador.nome}
+                  </span>
+                  <span className="mt-2 flex gap-4 text-sm text-ink-soft">
+                    <a
+                      href={criador.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-sublinhado hover:text-ink"
+                    >
+                      GitHub
+                    </a>
+                    <a
+                      href={criador.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-sublinhado hover:text-ink"
+                    >
+                      LinkedIn
+                    </a>
+                  </span>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
       <section className="section">
-        <div className="container-max flex flex-col items-center text-center">
-          <h2>Stack técnica</h2>
-          <div className="mt-8 grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="container-max">
+          <span className="kicker">Stack</span>
+
+          <dl className="mt-8 border-t border-ink">
             {stack.map((item) => (
-              <div key={item.grupo} className="card flex flex-col items-center">
-                <span className="font-display text-sm font-semibold uppercase tracking-wider text-gray-500">
+              <div
+                key={item.grupo}
+                className="flex flex-col gap-3 border-b border-rule py-5 sm:flex-row sm:items-baseline sm:gap-10"
+              >
+                <dt className="w-44 shrink-0 font-display text-sm font-semibold tracking-tight">
                   {item.grupo}
-                </span>
-                <ul className="mt-3 flex flex-wrap justify-center gap-2">
+                </dt>
+                <dd className="flex flex-wrap gap-2">
                   {item.itens.map((tecnologia) => (
-                    <li key={tecnologia} className="badge">
+                    <span key={tecnologia} className="badge bg-paper">
                       {tecnologia}
-                    </li>
+                    </span>
                   ))}
-                </ul>
+                </dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
       </section>
     </main>
