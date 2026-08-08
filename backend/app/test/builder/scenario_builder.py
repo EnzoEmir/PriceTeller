@@ -165,6 +165,7 @@ class ScenarioBuilder:
                 preco=_preco(float(preco_atual) * rng.uniform(0.90, 1.18)),
                 data=agora - timedelta(days=meses_atras * 30),
             )
+
     def only_categorias(self):
         try:
             categorias = [create_categoria(self.db) for _ in range(3)]
