@@ -15,7 +15,10 @@ const displayFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "PriceTeller — Monte e compare preços de PC",
+  title: {
+    default: "PriceTeller — Monte e compare preços de PC",
+    template: "%s — PriceTeller",
+  },
   description: "Monte a configuração do seu PC e compare os preços das peças em tempo real.",
 };
 
@@ -25,10 +28,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${bodyFont.variable} ${displayFont.variable} antialiased`}>
-        <Header></Header>
-        {children}
+    <html lang="pt-BR">
+      <body
+        className={`${bodyFont.variable} ${displayFont.variable} flex min-h-screen flex-col antialiased`}
+      >
+        <Header />
+        {/* Segura o footer no rodapé da viewport quando a página é curta. */}
+        <div className="flex-1">{children}</div>
         <Footer />
       </body>
     </html>
