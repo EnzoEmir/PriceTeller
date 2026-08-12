@@ -1,14 +1,11 @@
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
 from app.models.historico import Historico
 
-class HistoricoService:
-    def __init__(self):
-        pass
 
-    def criar_historico(self, historico: Historico, session: Session = Depends(get_session)):
+class HistoricoService:
+    def criar_historico(self, historico: Historico, session: Session):
         """
         Cria um novo registro de histórico de preço.
         
@@ -21,7 +18,7 @@ class HistoricoService:
         session.refresh(historico)
         return historico
     
-    def listar_historico(self, session: Session = Depends(get_session)):
+    def listar_historico(self, session: Session):
         """
         Retorna todos os registros de histórico.
         """
@@ -29,7 +26,7 @@ class HistoricoService:
         historicos = session.exec(statement).all()
         return historicos
     
-    def buscar_historico(self, historico_id: int, session: Session = Depends(get_session)):
+    def buscar_historico(self, historico_id: int, session: Session):
         """
         Busca um registro de histórico específico por ID.
         
@@ -46,7 +43,7 @@ class HistoricoService:
         self,
         historico_id: int,
         historico_atualizado: Historico,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza um registro de histórico existente.
@@ -70,7 +67,7 @@ class HistoricoService:
         session.refresh(historico)
         return historico
     
-    def deletar_historico(self, historico_id: int, session: Session = Depends(get_session)):
+    def deletar_historico(self, historico_id: int, session: Session):
         """
         Deleta um registro de histórico do banco de dados.
         

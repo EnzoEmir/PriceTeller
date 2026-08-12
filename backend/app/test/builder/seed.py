@@ -16,7 +16,9 @@ def seed():
 
     with Session(engine) as session:
         builder = ScenarioBuilder(session)
-        builder.basic()
+        dados = builder.basic()
+        print("Retorno em JSON do Banco de dados construido:", dados)
+        session.commit() 
 
 if __name__ == "__main__":
     seed()

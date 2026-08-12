@@ -1,19 +1,17 @@
-"""
-Configuração do banco de dados SQLite
-Mudar para PostgreSQL no futuro
-"""
 from sqlmodel import create_engine, SQLModel, Session
-import os
 
-# URL do banco SQLite (arquivo local)
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./database.db")
+from app.core.config import settings
 
-# echo=True: mostra SQL no console 
-# connect_args={"check_same_thread": False}: necessário para SQLite com FastAPI
+# check_same_thread=False: o SQLite recusa uso da conexão fora da thread que a criou,
+# e o FastAPI atende requisições em threads diferentes
+connect_args = (
+    {"check_same_thread": False} if settings.database_url.startswith("sqlite") else {}
+)
+
 engine = create_engine(
-    DATABASE_URL,
-    echo=True,
-    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+    settings.database_url,
+    echo=settings.sql_echo,
+    connect_args=connect_args,
 )
 
 

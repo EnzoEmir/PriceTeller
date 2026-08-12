@@ -1,15 +1,47 @@
-from fastapi import Depends, HTTPException
+from typing import Sequence
+
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from app.core.database import get_session
+from app.models.loja import Loja
 from app.models.oferta import Oferta
+from app.schemas.oferta import MelhorOferta, ResumoOfertas
 
 
 class OfertaService:
-    def __init__(self):
-        pass
+    def resumo_por_produto(
+        self, session: Session, produto_ids: Sequence[int]
+    ) -> dict[int, ResumoOfertas]:
+        """
+        Menor preço e quantidade de ofertas de cada produto informado.
 
-    def criar_oferta(self, oferta: Oferta, session: Session = Depends(get_session)):
+        Busca tudo numa query só para a listagem não disparar uma consulta por produto.
+        """
+        if not produto_ids:
+            return {}
+
+        linhas = session.exec(
+            select(Oferta, Loja.nome)
+            .join(Loja, Loja.id == Oferta.fk_loja_id)
+            .where(Oferta.fk_produto_id.in_(produto_ids))
+        ).all()
+
+        resumos: dict[int, ResumoOfertas] = {}
+
+        for oferta, loja_nome in linhas:
+            resumo = resumos.setdefault(oferta.fk_produto_id, ResumoOfertas())
+            resumo.total_ofertas += 1
+
+            if resumo.melhor_oferta is None or oferta.preco_atual < resumo.melhor_oferta.preco:
+                resumo.melhor_oferta = MelhorOferta(
+                    loja_id=oferta.fk_loja_id,
+                    loja_nome=loja_nome,
+                    preco=oferta.preco_atual,
+                    url_link=oferta.url_link,
+                )
+
+        return resumos
+    def criar_oferta(self, oferta: Oferta, session: Session):
         """
         Cria uma nova oferta no banco de dados.
         
@@ -23,7 +55,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def listar_ofertas(self, session: Session = Depends(get_session)):
+    def listar_ofertas(self, session: Session):
         """
         Retorna todas as ofertas cadastradas.
         """
@@ -31,7 +63,7 @@ class OfertaService:
         ofertas = session.exec(statement).all()
         return ofertas
     
-    def buscar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
+    def buscar_oferta(self, oferta_id: int, session: Session):
         """
         Busca uma oferta específica por ID.
         
@@ -48,7 +80,7 @@ class OfertaService:
         self,
         oferta_id: int,
         oferta_atualizada: Oferta,
-        session: Session = Depends(get_session)
+        session: Session
     ):
         """
         Atualiza uma oferta existente.
@@ -74,7 +106,7 @@ class OfertaService:
         session.refresh(oferta)
         return oferta
     
-    def deletar_oferta(self, oferta_id: int, session: Session = Depends(get_session)):
+    def deletar_oferta(self, oferta_id: int, session: Session):
         """
         Deleta uma oferta do banco de dados.
         
