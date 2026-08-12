@@ -1,0 +1,171 @@
+{
+  "categorias": [
+    "Processador",
+    "Placa de Vídeo",
+    "Placa-Mãe",
+    "Memória RAM",
+    "Fonte"
+  ],
+  "produtos": [
+    {
+      "categoria": "Processador",
+      "marca": "AMD",
+      "modelo": "Ryzen 7 5700X",
+      "ean": "0730143313728",
+      "termos_busca": ["Ryzen 7 5700X", "R7 5700X", "5700X"],
+      "specs": { "socket": "AM4", "tdp": 65, "nucleos": 8, "threads": 16, "tipo_ram": ["DDR4"] }
+    },
+    {
+      "categoria": "Processador",
+      "marca": "AMD",
+      "modelo": "Ryzen 5 7600",
+      "ean": "0730143314565",
+      "termos_busca": ["Ryzen 5 7600", "R5 7600"],
+      "specs": { "socket": "AM5", "tdp": 65, "nucleos": 6, "threads": 12, "tipo_ram": ["DDR5"] }
+    },
+    {
+      "categoria": "Processador",
+      "marca": "Intel",
+      "modelo": "Core i5-13400F",
+      "ean": "5059877028133",
+      "termos_busca": ["i5-13400F", "i5 13400F", "Core i5 13400F"],
+      "specs": { "socket": "LGA1700", "tdp": 65, "nucleos": 10, "threads": 16, "tipo_ram": ["DDR4", "DDR5"] }
+    },
+    {
+      "categoria": "Processador",
+      "marca": "Intel",
+      "modelo": "Core i7-14700K",
+      "ean": "5059877065091",
+      "termos_busca": ["i7-14700K", "i7 14700K", "Core i7 14700K"],
+      "specs": { "socket": "LGA1700", "tdp": 125, "nucleos": 20, "threads": 28, "tipo_ram": ["DDR4", "DDR5"] }
+    },
+    {
+      "categoria": "Placa-Mãe",
+      "marca": "ASUS",
+      "modelo": "TUF Gaming B550M-Plus",
+      "ean": "4711081128496",
+      "termos_busca": ["TUF Gaming B550M-Plus", "B550M Plus TUF", "TUF B550M"],
+      "specs": { "socket": "AM4", "chipset": "B550", "form_factor": "mATX", "slots_ram": 4, "tipo_ram": ["DDR4"] }
+    },
+    {
+      "categoria": "Placa-Mãe",
+      "marca": "MSI",
+      "modelo": "B650 Gaming Plus WiFi",
+      "ean": "4719072996923",
+      "termos_busca": ["MSI B650 Gaming Plus", "B650 Gaming Plus WiFi"],
+      "specs": { "socket": "AM5", "chipset": "B650", "form_factor": "ATX", "slots_ram": 4, "tipo_ram": ["DDR5"] }
+    },
+    {
+      "categoria": "Placa-Mãe",
+      "marca": "Gigabyte",
+      "modelo": "B760M AORUS Elite",
+      "ean": "4719331851217",
+      "termos_busca": ["B760M AORUS Elite", "B760M AORUS"],
+      "specs": { "socket": "LGA1700", "chipset": "B760", "form_factor": "mATX", "slots_ram": 4, "tipo_ram": ["DDR5"] }
+    },
+    {
+      "categoria": "Placa-Mãe",
+      "marca": "ASRock",
+      "modelo": "B450M Steel Legend",
+      "ean": "4717677338874",
+      "termos_busca": ["B450M Steel Legend", "Steel Legend B450M"],
+      "specs": { "socket": "AM4", "chipset": "B450", "form_factor": "mATX", "slots_ram": 4, "tipo_ram": ["DDR4"] }
+    },
+    {
+      "categoria": "Placa de Vídeo",
+      "marca": "Gigabyte",
+      "modelo": "GeForce RTX 4060 Eagle OC 8G",
+      "ean": "4719331312688",
+      "termos_busca": ["RTX 4060 Eagle OC 8G", "GV-N4060EAGLE OC-8GD", "RTX 4060 Eagle"],
+      "specs": { "vram_gb": 8, "tdp": 115, "psu_recomendada_w": 450, "comprimento_mm": 272 }
+    },
+    {
+      "categoria": "Placa de Vídeo",
+      "marca": "MSI",
+      "modelo": "GeForce RTX 4070 Super Ventus 2X OC 12G",
+      "ean": "4719072998312",
+      "termos_busca": ["RTX 4070 Super Ventus 2X", "RTX 4070 Super MSI"],
+      "specs": { "vram_gb": 12, "tdp": 220, "psu_recomendada_w": 650, "comprimento_mm": 242 }
+    },
+    {
+      "categoria": "Placa de Vídeo",
+      "marca": "ASUS",
+      "modelo": "Dual Radeon RX 6600 V2 8GB",
+      "ean": "4711081643210",
+      "termos_busca": ["RX 6600 Dual V2", "RX 6600 ASUS Dual", "DUAL-RX6600-8G-V2"],
+      "specs": { "vram_gb": 8, "tdp": 132, "psu_recomendada_w": 500, "comprimento_mm": 243 }
+    },
+    {
+      "categoria": "Placa de Vídeo",
+      "marca": "Sapphire",
+      "modelo": "Pulse Radeon RX 7800 XT 16GB",
+      "ean": "4895106294379",
+      "termos_busca": ["RX 7800 XT Pulse", "Sapphire RX 7800 XT"],
+      "specs": { "vram_gb": 16, "tdp": 266, "psu_recomendada_w": 700, "comprimento_mm": 280 }
+    },
+    {
+      "categoria": "Memória RAM",
+      "marca": "Kingston",
+      "modelo": "Fury Beast 16GB (1x16GB) 3200MHz",
+      "ean": "0740617319781",
+      "termos_busca": ["Fury Beast 16GB 3200MHz", "KF432C16BB/16", "Kingston Fury 16GB"],
+      "specs": { "tipo": "DDR4", "capacidade_gb": 16, "frequencia_mhz": 3200, "pentes": 1 }
+    },
+    {
+      "categoria": "Memória RAM",
+      "marca": "Corsair",
+      "modelo": "Vengeance LPX 16GB (2x8GB) 3600MHz",
+      "ean": "0840006613862",
+      "termos_busca": ["Vengeance LPX 2x8GB 3600MHz", "CMK16GX4M2D3600C18"],
+      "specs": { "tipo": "DDR4", "capacidade_gb": 16, "frequencia_mhz": 3600, "pentes": 2 }
+    },
+    {
+      "categoria": "Memória RAM",
+      "marca": "G.Skill",
+      "modelo": "Ripjaws S5 32GB (2x16GB) 6000MHz",
+      "ean": "4713294231454",
+      "termos_busca": ["Ripjaws S5 DDR5 32GB", "F5-6000J3040F16GX2-RS5K"],
+      "specs": { "tipo": "DDR5", "capacidade_gb": 32, "frequencia_mhz": 6000, "pentes": 2 }
+    },
+    {
+      "categoria": "Memória RAM",
+      "marca": "XPG",
+      "modelo": "Lancer RGB 32GB (2x16GB) 6000MHz",
+      "ean": "4711085937407",
+      "termos_busca": ["XPG Lancer RGB DDR5 32GB", "AX5U6000C3016G-DCLARBK"],
+      "specs": { "tipo": "DDR5", "capacidade_gb": 32, "frequencia_mhz": 6000, "pentes": 2 }
+    },
+    {
+      "categoria": "Fonte",
+      "marca": "Corsair",
+      "modelo": "CV650",
+      "ean": "0840006609384",
+      "termos_busca": ["Corsair CV650", "CV650 650W", "CP-9020236-BR"],
+      "specs": { "potencia_w": 650, "certificacao": "80 Plus Bronze", "modular": false }
+    },
+    {
+      "categoria": "Fonte",
+      "marca": "MSI",
+      "modelo": "MAG A650BN",
+      "ean": "4719072847119",
+      "termos_busca": ["MSI MAG A650BN", "A650BN 650W"],
+      "specs": { "potencia_w": 650, "certificacao": "80 Plus Bronze", "modular": false }
+    },
+    {
+      "categoria": "Fonte",
+      "marca": "XPG",
+      "modelo": "Core Reactor 750W",
+      "ean": "4710273772447",
+      "termos_busca": ["Core Reactor 750W", "XPG Core Reactor 750"],
+      "specs": { "potencia_w": 750, "certificacao": "80 Plus Gold", "modular": true }
+    },
+    {
+      "categoria": "Fonte",
+      "marca": "Cooler Master",
+      "modelo": "MWE Gold 850 V2",
+      "ean": "4719512105740",
+      "termos_busca": ["MWE Gold 850 V2", "Cooler Master 850W Gold"],
+      "specs": { "potencia_w": 850, "certificacao": "80 Plus Gold", "modular": true }
+    }
+  ]
+}
