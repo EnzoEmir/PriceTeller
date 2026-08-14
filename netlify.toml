@@ -1,0 +1,17 @@
+# netlify.toml
+
+[build]
+  # Ajuste para seu monorepo - apontando para a pasta frontend
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+# Força o plugin do Next.js
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Configuração para rotas dinâmicas (como /pecas)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
