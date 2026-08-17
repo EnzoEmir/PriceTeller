@@ -1,0 +1,11 @@
+# netlify.toml
+
+[build]
+  base = "frontend"
+  command = "npm run build"
+  # Não defina 'publish' aqui - o plugin do Next.js cuida disso
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Remova completamente os [[redirects]] - o plugin do Next.js já gerencia as rotas
