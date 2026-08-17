@@ -1,3 +1,4 @@
+import BotaoEscolher from "@/components/montagem/BotaoEscolher";
 import { formatarPreco } from "@/lib/preco";
 import { resumirSpecs } from "@/lib/specs";
 import type { ProdutoComOfertas } from "@/types/api";
@@ -65,6 +66,10 @@ export default function ProdutoCard({ produto, categoria }: Props) {
                 {produto.marca} {produto.modelo} em {oferta.loja_nome}
               </span>
             </a>
+          </div>
+
+          <div className="mt-4">
+            <BotaoEscolher produto={produto} />
           </div>
         </div>
       ) : (
