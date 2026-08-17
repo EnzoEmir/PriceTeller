@@ -1,22 +1,36 @@
-import type { ProdutoComOfertas } from "@/types/api";
+import { somarPrecos } from "@/lib/preco";
+import type { OfertaDaLoja, ProdutoComOfertas } from "@/types/api";
 
 export const CHAVE_MONTAGEM = "priceteller:montagem";
 
 /**
- * Guarda um retrato da peça no momento da escolha, e não só o id, para a
- * montagem renderizar sem depender da API. O preço aqui envelhece: é o menor
- * preço de quando o usuário escolheu, não o de agora.
+ * Guarda um retrato das ofertas no momento da escolha, e não só o id do produto,
+ * para a montagem renderizar e trocar de loja sem depender da API. Os preços aqui
+ * envelhecem: são os de quando o usuário escolheu, não os de agora.
  */
 export type ItemMontagem = {
   produto_id: number;
   categoria_id: number;
   marca: string;
   modelo: string;
-  preco: string;
-  loja_nome: string;
-  url_link: string;
+  loja_id: number;
+  ofertas: OfertaDaLoja[];
   quantidade: number;
 };
+
+export function ofertaEscolhida(item: ItemMontagem): OfertaDaLoja {
+  return item.ofertas.find((oferta) => oferta.loja_id === item.loja_id) ?? item.ofertas[0];
+}
+
+export function somarMontagem(itens: ItemMontagem[]): string {
+  return somarPrecos(
+    itens.map((item) => ({ preco: ofertaEscolhida(item).preco, quantidade: item.quantidade })),
+  );
+}
+
+export function contarPecas(itens: ItemMontagem[]): number {
+  return itens.reduce((soma, item) => soma + item.quantidade, 0);
+}
 
 export function itemDoProduto(produto: ProdutoComOfertas): ItemMontagem | null {
   if (!produto.melhor_oferta) return null;
@@ -26,11 +40,23 @@ export function itemDoProduto(produto: ProdutoComOfertas): ItemMontagem | null {
     categoria_id: produto.fk_categoria_id,
     marca: produto.marca,
     modelo: produto.modelo,
-    preco: produto.melhor_oferta.preco,
-    loja_nome: produto.melhor_oferta.loja_nome,
-    url_link: produto.melhor_oferta.url_link,
+    loja_id: produto.melhor_oferta.loja_id,
+    ofertas: produto.ofertas,
     quantidade: 1,
   };
+}
+
+function ofertaValida(oferta: unknown): oferta is OfertaDaLoja {
+  if (typeof oferta !== "object" || oferta === null) return false;
+
+  const candidata = oferta as Record<string, unknown>;
+
+  return (
+    typeof candidata.loja_id === "number" &&
+    typeof candidata.loja_nome === "string" &&
+    typeof candidata.preco === "string" &&
+    typeof candidata.url_link === "string"
+  );
 }
 
 function valido(item: unknown): item is ItemMontagem {
@@ -43,9 +69,10 @@ function valido(item: unknown): item is ItemMontagem {
     typeof candidato.categoria_id === "number" &&
     typeof candidato.marca === "string" &&
     typeof candidato.modelo === "string" &&
-    typeof candidato.preco === "string" &&
-    typeof candidato.loja_nome === "string" &&
-    typeof candidato.url_link === "string" &&
+    typeof candidato.loja_id === "number" &&
+    Array.isArray(candidato.ofertas) &&
+    candidato.ofertas.length > 0 &&
+    candidato.ofertas.every(ofertaValida) &&
     typeof candidato.quantidade === "number" &&
     candidato.quantidade > 0
   );

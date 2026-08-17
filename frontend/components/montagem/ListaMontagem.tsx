@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useMontagem } from "@/components/montagem/MontagemProvider";
-import { formatarPreco, somarPrecos } from "@/lib/preco";
-import type { ItemMontagem } from "@/lib/montagem";
+import { formatarPreco } from "@/lib/preco";
+import { ofertaEscolhida, somarMontagem, type ItemMontagem } from "@/lib/montagem";
 import type { Categoria } from "@/types/api";
 
 function Quantidade({ item }: { item: ItemMontagem }) {
@@ -34,9 +34,41 @@ function Quantidade({ item }: { item: ItemMontagem }) {
   );
 }
 
+function SeletorDeLoja({ item }: { item: ItemMontagem }) {
+  const { trocarLoja } = useMontagem();
+  const oferta = ofertaEscolhida(item);
+
+  if (item.ofertas.length === 1) {
+    return (
+      <span className="text-[0.8125rem] text-ink-soft">
+        {formatarPreco(oferta.preco)} na {oferta.loja_nome}
+      </span>
+    );
+  }
+
+  return (
+    <label className="inline-flex items-center gap-2">
+      <span className="sr-only">Loja escolhida para {item.modelo}</span>
+
+      <select
+        value={item.loja_id}
+        onChange={(evento) => trocarLoja(item.produto_id, Number(evento.target.value))}
+        className="field h-9 w-auto py-0 text-[0.8125rem] tabular-nums"
+      >
+        {item.ofertas.map((opcao) => (
+          <option key={opcao.loja_id} value={opcao.loja_id}>
+            {opcao.loja_nome} · {formatarPreco(opcao.preco)}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 function SlotPreenchido({ item }: { item: ItemMontagem }) {
   const { remover } = useMontagem();
-  const subtotal = somarPrecos([item]);
+  const oferta = ofertaEscolhida(item);
+  const subtotal = somarMontagem([item]);
 
   return (
     <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
@@ -47,18 +79,19 @@ function SlotPreenchido({ item }: { item: ItemMontagem }) {
         <span className="block font-display text-base font-semibold tracking-tight">
           {item.modelo}
         </span>
-        <span className="mt-1 block text-[0.8125rem] text-ink-soft">
-          {formatarPreco(item.preco)} na {item.loja_nome}
-          {" · "}
+
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <SeletorDeLoja item={item} />
+
           <a
-            href={item.url_link}
+            href={oferta.url_link}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="link-sublinhado"
+            className="link-sublinhado text-[0.8125rem] text-ink-soft"
           >
             ver na loja ↗
           </a>
-        </span>
+        </div>
       </div>
 
       <div className="flex shrink-0 items-center gap-4">
@@ -94,48 +127,31 @@ function SlotVazio({ categoria }: { categoria: Categoria }) {
 }
 
 export default function ListaMontagem({ categorias }: { categorias: Categoria[] }) {
-  const { itens, total, pronto, limpar, itemDaCategoria } = useMontagem();
+  const { itens, total, pecas, pronto, limpar, itemDaCategoria } = useMontagem();
 
   if (!pronto) {
     return <p className="py-10 text-ink-soft">Carregando a montagem...</p>;
   }
 
-  // Sem categorias a API caiu; ainda dá para mostrar o que já foi escolhido.
-  const slots: Array<{ chave: string; nome: string; item?: ItemMontagem; categoria?: Categoria }> =
-    categorias.length > 0
-      ? categorias.map((categoria) => ({
-          chave: `categoria-${categoria.id}`,
-          nome: categoria.nome,
-          item: itemDaCategoria(categoria.id),
-          categoria,
-        }))
-      : itens.map((item) => ({
-          chave: `item-${item.produto_id}`,
-          nome: "Peça",
-          item,
-        }));
-
-  const pecas = itens.reduce((soma, item) => soma + item.quantidade, 0);
-
   return (
     <>
       <div className="border border-ink">
-        {slots.map((slot, indice) => (
-          <section
-            key={slot.chave}
-            className={indice > 0 ? "border-t border-rule" : undefined}
-          >
-            <h2 className="kicker border-b border-rule bg-paper-alt px-5 py-2.5 text-ink">
-              {slot.nome}
-            </h2>
+        {categorias.map((categoria, indice) => {
+          const item = itemDaCategoria(categoria.id);
 
-            {slot.item ? (
-              <SlotPreenchido item={slot.item} />
-            ) : slot.categoria ? (
-              <SlotVazio categoria={slot.categoria} />
-            ) : null}
-          </section>
-        ))}
+          return (
+            <section
+              key={categoria.id}
+              className={indice > 0 ? "border-t border-rule" : undefined}
+            >
+              <h2 className="kicker border-b border-rule bg-paper-alt px-5 py-2.5 text-ink">
+                {categoria.nome}
+              </h2>
+
+              {item ? <SlotPreenchido item={item} /> : <SlotVazio categoria={categoria} />}
+            </section>
+          );
+        })}
 
         <div className="flex flex-wrap items-baseline justify-between gap-4 border-t border-ink bg-paper-alt px-5 py-5">
           <span className="kicker text-ink">

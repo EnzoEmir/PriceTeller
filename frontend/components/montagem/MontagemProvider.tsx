@@ -1,8 +1,14 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from "react";
-import { CHAVE_MONTAGEM, gravarMontagem, lerMontagem, type ItemMontagem } from "@/lib/montagem";
-import { somarPrecos } from "@/lib/preco";
+import {
+  CHAVE_MONTAGEM,
+  contarPecas,
+  gravarMontagem,
+  lerMontagem,
+  somarMontagem,
+  type ItemMontagem,
+} from "@/lib/montagem";
 
 /**
  * O localStorage é uma fonte de dados fora do React, então a leitura passa por
@@ -20,21 +26,26 @@ function avisar() {
   for (const ouvinte of ouvintes) ouvinte();
 }
 
+// outra aba gravando a mesma chave mantém esta em dia; um ouvinte só para a
+// store inteira, e não um por componente inscrito
+function aoMudarStorage(evento: StorageEvent) {
+  if (evento.key !== CHAVE_MONTAGEM) return;
+  carregado = false;
+  avisar();
+}
+
 function inscrever(ouvinte: () => void) {
+  if (ouvintes.size === 0) {
+    window.addEventListener("storage", aoMudarStorage);
+  }
+
   ouvintes.add(ouvinte);
-
-  // outra aba gravando a mesma chave mantém esta em dia
-  const aoMudarStorage = (evento: StorageEvent) => {
-    if (evento.key !== CHAVE_MONTAGEM) return;
-    carregado = false;
-    avisar();
-  };
-
-  window.addEventListener("storage", aoMudarStorage);
 
   return () => {
     ouvintes.delete(ouvinte);
-    window.removeEventListener("storage", aoMudarStorage);
+    if (ouvintes.size === 0) {
+      window.removeEventListener("storage", aoMudarStorage);
+    }
   };
 }
 
@@ -61,9 +72,12 @@ function guardar(proximos: ItemMontagem[]) {
 type Montagem = {
   itens: ItemMontagem[];
   total: string;
+  /** Soma das quantidades, que é o que a interface chama de "peças". */
+  pecas: number;
   /** Falso enquanto o localStorage não foi lido, para o servidor e o cliente renderizarem igual. */
   pronto: boolean;
   escolher: (item: ItemMontagem) => void;
+  trocarLoja: (produtoId: number, lojaId: number) => void;
   alterarQuantidade: (produtoId: number, delta: number) => void;
   remover: (produtoId: number) => void;
   limpar: () => void;
@@ -100,6 +114,14 @@ export default function MontagemProvider({ children }: { children: React.ReactNo
     guardar([...atuais.filter((i) => i.categoria_id !== item.categoria_id), item]);
   }, []);
 
+  const trocarLoja = useCallback((produtoId: number, lojaId: number) => {
+    guardar(
+      estadoAtual().map((item) =>
+        item.produto_id === produtoId ? { ...item, loja_id: lojaId } : item,
+      ),
+    );
+  }, []);
+
   const alterarQuantidade = useCallback((produtoId: number, delta: number) => {
     guardar(
       estadoAtual().flatMap((item) => {
@@ -120,15 +142,17 @@ export default function MontagemProvider({ children }: { children: React.ReactNo
   const valor = useMemo<Montagem>(
     () => ({
       itens,
-      total: somarPrecos(itens),
+      total: somarMontagem(itens),
+      pecas: contarPecas(itens),
       pronto,
       escolher,
+      trocarLoja,
       alterarQuantidade,
       remover,
       limpar,
       itemDaCategoria: (categoriaId) => itens.find((item) => item.categoria_id === categoriaId),
     }),
-    [itens, pronto, escolher, alterarQuantidade, remover, limpar],
+    [itens, pronto, escolher, trocarLoja, alterarQuantidade, remover, limpar],
   );
 
   return <MontagemContext.Provider value={valor}>{children}</MontagemContext.Provider>;

@@ -5,11 +5,9 @@ import { useMontagem } from "@/components/montagem/MontagemProvider";
 import { formatarPreco } from "@/lib/preco";
 
 export default function ResumoMontagem() {
-  const { itens, total, pronto } = useMontagem();
+  const { itens, total, pecas, pronto } = useMontagem();
 
   if (!pronto || itens.length === 0) return null;
-
-  const pecas = itens.reduce((soma, item) => soma + item.quantidade, 0);
 
   return (
     <div className="mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border border-ink bg-accent-wash px-5 py-3">
