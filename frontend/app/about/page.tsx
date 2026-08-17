@@ -22,7 +22,7 @@ const stack = [
   { grupo: "Frontend", itens: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4"] },
   { grupo: "Backend", itens: ["FastAPI", "SQLModel", "SQLAlchemy", "Pydantic"] },
   { grupo: "Banco de dados", itens: ["SQLite (dev)", "PostgreSQL (planejado)"] },
-  { grupo: "Fontes de dados", itens: ["Lomadee", "Mercado Livre"] },
+  { grupo: "Fontes de dados", itens: ["Mercado Livre"] },
 ];
 
 export default function SobreNos() {
