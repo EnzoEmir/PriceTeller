@@ -1,0 +1,23 @@
+name: Semgrep SAST Check
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  semgrep:
+    name: Security scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Run Semgrep
+        run: semgrep scan --config auto
