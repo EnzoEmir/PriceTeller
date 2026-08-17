@@ -3,9 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+from sqlmodel import Session
+
 from app.core.config import settings
-from app.core.database import criar_tabelas
+from app.core.database import criar_tabelas, engine
 from app.core.exceptions import registrar_handlers
+from app.data.loader import carregar_catalogo, carregar_ofertas
 from app.models import Categoria, Produto, Loja, Oferta, Historico
 from app.routes import categorias, produtos, lojas, ofertas, historico
 
@@ -13,7 +16,11 @@ from app.routes import categorias, produtos, lojas, ofertas, historico
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     criar_tabelas()
-    print("Tabelas criadas/verificadas no banco de dados!")
+
+    with Session(engine) as session:
+        print("catálogo:", carregar_catalogo(session))
+        print("ofertas:", carregar_ofertas(session))
+
     yield
 
 
