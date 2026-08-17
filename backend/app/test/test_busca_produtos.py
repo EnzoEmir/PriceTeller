@@ -107,16 +107,29 @@ class TestOfertasNaResposta:
     def test_traz_a_oferta_mais_barata(self, client, catalogo):
         item = buscar(client, q="ryzen")["items"][0]
 
-        assert item["total_ofertas"] == 2
+        assert len(item["ofertas"]) == 2
         assert item["melhor_oferta"]["preco"] == "850.00"
         assert item["melhor_oferta"]["loja_nome"] == "Pichau"
         assert item["melhor_oferta"]["url_link"] == "https://pichau.com.br/ryzen"
 
+    def test_traz_todas_as_ofertas_da_mais_barata_para_a_mais_cara(self, client, catalogo):
+        item = buscar(client, q="ryzen")["items"][0]
+
+        assert [(o["loja_nome"], o["preco"]) for o in item["ofertas"]] == [
+            ("Pichau", "850.00"),
+            ("Kabum", "900.00"),
+        ]
+
+    def test_a_primeira_oferta_e_a_melhor_oferta(self, client, catalogo):
+        item = buscar(client, q="ryzen")["items"][0]
+
+        assert item["ofertas"][0] == item["melhor_oferta"]
+
     def test_produto_sem_oferta(self, client, catalogo):
         item = buscar(client, q="sem oferta")["items"][0]
 
-        assert item["total_ofertas"] == 0
         assert item["melhor_oferta"] is None
+        assert item["ofertas"] == []
 
     def test_uma_consulta_para_todas_as_ofertas(self, client, catalogo, session):
         from sqlalchemy import event

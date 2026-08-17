@@ -5,7 +5,7 @@ from sqlmodel import Session, select
 
 from app.models.loja import Loja
 from app.models.oferta import Oferta
-from app.schemas.oferta import MelhorOferta, ResumoOfertas
+from app.schemas.oferta import OfertaDaLoja, ResumoOfertas
 
 
 class OfertaService:
@@ -13,8 +13,7 @@ class OfertaService:
         self, session: Session, produto_ids: Sequence[int]
     ) -> dict[int, ResumoOfertas]:
         """
-        Menor preço e quantidade de ofertas de cada produto informado.
-
+        Todas as ofertas de cada produto informado, da mais barata para a mais cara.
         Busca tudo numa query só para a listagem não disparar uma consulta por produto.
         """
         if not produto_ids:
@@ -24,21 +23,25 @@ class OfertaService:
             select(Oferta, Loja.nome)
             .join(Loja, Loja.id == Oferta.fk_loja_id)
             .where(Oferta.fk_produto_id.in_(produto_ids))
+            .order_by(Oferta.preco_atual, Oferta.id)
         ).all()
 
         resumos: dict[int, ResumoOfertas] = {}
 
         for oferta, loja_nome in linhas:
             resumo = resumos.setdefault(oferta.fk_produto_id, ResumoOfertas())
-            resumo.total_ofertas += 1
+            da_loja = OfertaDaLoja(
+                loja_id=oferta.fk_loja_id,
+                loja_nome=loja_nome,
+                preco=oferta.preco_atual,
+                url_link=oferta.url_link,
+            )
 
-            if resumo.melhor_oferta is None or oferta.preco_atual < resumo.melhor_oferta.preco:
-                resumo.melhor_oferta = MelhorOferta(
-                    loja_id=oferta.fk_loja_id,
-                    loja_nome=loja_nome,
-                    preco=oferta.preco_atual,
-                    url_link=oferta.url_link,
-                )
+            resumo.ofertas.append(da_loja)
+
+            # a query vem ordenada por preço, então a primeira é a mais barata
+            if resumo.melhor_oferta is None:
+                resumo.melhor_oferta = da_loja
 
         return resumos
     def criar_oferta(self, oferta: Oferta, session: Session):
