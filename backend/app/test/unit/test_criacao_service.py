@@ -1,6 +1,3 @@
-import os
-os.environ["DATABASE_URL"] = "sqlite:///./seed.db"
-
 from app.models.categoria import Categoria
 from app.services.categoria_service import CategoriaService
 from app.models.historico import Historico
@@ -13,38 +10,27 @@ from app.models.produto import Produto
 from app.services.produto_service import ProdutoService
 
 # ==================== SETUP =====================
-from faker import Faker
 from app.test.factories.categoria_factory import make_categoria
 from app.test.factories.loja_factory import make_loja
 from app.test.factories.produto_factory import make_product
 from app.test.factories.oferta_factory import make_oferta
 from app.test.factories.historico_factory import make_history
-fake = Faker('pt_BR')
-from sqlmodel import Session
 
-from app.core.database import engine, criar_tabelas
-criar_tabelas()
-
-def get_session():
-    with Session(engine) as session:
-        yield session
+# a fixture `session` do conftest é SQLite em memória; usar o engine da aplicação
+# aqui gravava dados de faker no database.db de desenvolvimento
 
 # ==================== TESTES =====================
-def test_criar_categoria():
+def test_criar_categoria(session):
     data = Categoria(**make_categoria())
-    session = next(get_session())
     servicoCategoria = CategoriaService()
     servicoCategoria.criar_categoria(data, session=session)
 
-def test_criar_loja():
+def test_criar_loja(session):
     data = Loja(**make_loja())
-    session = next(get_session())
     servicoLoja = LojaService()
     servicoLoja.criar_loja(data, session=session)
 
-def test_criar_produto():
-    session = next(get_session())
-
+def test_criar_produto(session):
     categoria_service = CategoriaService()
     produto_service = ProdutoService()
 
@@ -63,8 +49,7 @@ def test_criar_produto():
     assert produto.id is not None
     assert produto.fk_categoria_id == categoria.id
 
-def test_criar_oferta():
-    session = next(get_session())
+def test_criar_oferta(session):
 
     categoria_service = CategoriaService()
     produto_service = ProdutoService()
@@ -98,8 +83,7 @@ def test_criar_oferta():
     assert oferta.fk_produto_id == produto.id
     assert oferta.fk_loja_id == loja.id
 
-def test_criar_historico():
-    session = next(get_session())
+def test_criar_historico(session):
 
     categoria_service = CategoriaService()
     produto_service = ProdutoService()
