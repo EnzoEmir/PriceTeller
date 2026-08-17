@@ -10,6 +10,7 @@ import ProdutoCard from "@/components/pecas/ProdutoCard";
 import Paginacao from "@/components/pecas/Paginacao";
 import { ApiIndisponivel, SemResultados } from "@/components/pecas/Avisos";
 import ResumoMontagem from "@/components/montagem/ResumoMontagem";
+import { AVISO_CURTO } from "@/lib/coleta";
 
 export const metadata: Metadata = {
   title: "Peças",
@@ -74,9 +75,7 @@ export default async function Pecas({ searchParams }: { searchParams: Promise<Pa
                 )}
               </p>
 
-              <p className="text-xs text-ink-soft">
-                Preços e lojas ainda são fictícios, gerados para desenvolvimento.
-              </p>
+              <p className="text-xs text-ink-soft">{AVISO_CURTO}</p>
             </div>
 
             {produtos.dados.items.length === 0 ? (

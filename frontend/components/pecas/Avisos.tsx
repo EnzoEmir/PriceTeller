@@ -24,9 +24,8 @@ export function ApiIndisponivel({ erro }: { erro: string }) {
       <p className="mt-4 max-w-xl text-ink">{erro}</p>
       <p className="mt-2 max-w-xl text-sm text-ink-soft">
         Suba a API com <code className="bg-paper px-1.5 py-0.5">uvicorn main:app --reload</code> na
-        pasta <code className="bg-paper px-1.5 py-0.5">backend</code>. Se o banco estiver vazio,
-        rode também{" "}
-        <code className="bg-paper px-1.5 py-0.5">python -m app.test.builder.seed_catalogo</code>.
+        pasta <code className="bg-paper px-1.5 py-0.5">backend</code>. Ela carrega o catálogo
+        sozinha ao iniciar.
       </p>
     </div>
   );

@@ -1,3 +1,5 @@
+import { AVISO_CURTO } from "@/lib/coleta";
+
 const pilares = [
   {
     titulo: "Uma busca, todas as lojas",
@@ -36,7 +38,7 @@ export default function BenefitsSection() {
           <span className="kicker shrink-0 text-ink">Ainda não</span>
           <p className="max-w-2xl text-sm">
             Aviso de incompatibilidade entre peças e gráfico de variação de preço estão no
-            roadmap. Os preços de hoje são fictícios, gerados para desenvolvimento.
+            roadmap. {AVISO_CURTO}
           </p>
         </div>
       </div>
