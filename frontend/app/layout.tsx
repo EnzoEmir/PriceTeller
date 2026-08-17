@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/Footer";
+import MontagemProvider from "@/components/montagem/MontagemProvider";
 
 const bodyFont = Inter({
   variable: "--font-body",
@@ -32,10 +33,12 @@ export default function RootLayout({
       <body
         className={`${bodyFont.variable} ${displayFont.variable} flex min-h-screen flex-col antialiased`}
       >
-        <Header />
-        {/* Segura o footer no rodapé da viewport quando a página é curta. */}
-        <div className="flex-1">{children}</div>
-        <Footer />
+        <MontagemProvider>
+          <Header />
+          {/* Segura o footer no rodapé da viewport quando a página é curta. */}
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </MontagemProvider>
       </body>
     </html>
   );
