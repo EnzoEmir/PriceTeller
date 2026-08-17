@@ -7,7 +7,7 @@ export type Categoria = {
  * Preço chega como string ("1857.90") porque é Decimal no banco.
  * Converter pra number perde precisão em soma, então guarde a string.
  */
-export type MelhorOferta = {
+export type OfertaDaLoja = {
   loja_id: number;
   loja_nome: string;
   preco: string;
@@ -25,8 +25,9 @@ export type Produto = {
 };
 
 export type ProdutoComOfertas = Produto & {
-  total_ofertas: number;
-  melhor_oferta: MelhorOferta | null;
+  /** Da mais barata para a mais cara. `melhor_oferta` é a primeira. */
+  ofertas: OfertaDaLoja[];
+  melhor_oferta: OfertaDaLoja | null;
 };
 
 export type Pagina<T> = {

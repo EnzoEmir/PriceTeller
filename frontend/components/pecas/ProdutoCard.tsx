@@ -1,3 +1,4 @@
+import BotaoEscolher from "@/components/montagem/BotaoEscolher";
 import { formatarPreco } from "@/lib/preco";
 import { resumirSpecs } from "@/lib/specs";
 import type { ProdutoComOfertas } from "@/types/api";
@@ -10,6 +11,7 @@ type Props = {
 export default function ProdutoCard({ produto, categoria }: Props) {
   const specs = resumirSpecs(produto.specs);
   const oferta = produto.melhor_oferta;
+  const outras = produto.ofertas.slice(1);
 
   return (
     <article className="flex h-full flex-col border border-rule bg-paper transition-colors duration-150 hover:border-ink">
@@ -48,10 +50,7 @@ export default function ProdutoCard({ produto, categoria }: Props) {
           </p>
 
           <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-[0.8125rem] text-ink-soft">
-              {oferta.loja_nome}
-              {produto.total_ofertas > 1 && ` · ${produto.total_ofertas} lojas`}
-            </span>
+            <span className="text-[0.8125rem] text-ink-soft">{oferta.loja_nome}</span>
 
             <a
               href={oferta.url_link}
@@ -65,6 +64,35 @@ export default function ProdutoCard({ produto, categoria }: Props) {
                 {produto.marca} {produto.modelo} em {oferta.loja_nome}
               </span>
             </a>
+          </div>
+
+          {outras.length > 0 && (
+            <div className="mt-3 border-t border-rule pt-3">
+              <span className="text-xs text-ink-soft">também em</span>
+
+              <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-soft">
+                {outras.map((outra) => (
+                  <li key={outra.loja_id}>
+                    <a
+                      href={outra.url_link}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="link-sublinhado"
+                    >
+                      {outra.loja_nome} <span className="tabular-nums">{formatarPreco(outra.preco)}</span>
+                      <span className="sr-only">
+                        {" "}
+                        para {produto.marca} {produto.modelo}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-4">
+            <BotaoEscolher produto={produto} />
           </div>
         </div>
       ) : (

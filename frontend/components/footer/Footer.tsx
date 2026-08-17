@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { headerLinks } from "@/components/header/links";
+import { AVISO_RODAPE } from "@/lib/coleta";
 
 const REPO_URL = "https://github.com/EnzoEmir/PriceTeller";
 
@@ -77,7 +78,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-rule pt-6 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between">
+        <p className="mt-12 max-w-3xl border-t border-rule pt-6 text-xs leading-relaxed text-ink-soft">
+          {AVISO_RODAPE}
+        </p>
+
+        <div className="mt-6 flex flex-col gap-3 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} PriceTeller</span>
           <a
             href={REPO_URL}

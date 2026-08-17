@@ -1,10 +1,11 @@
 from decimal import Decimal
 from typing import Optional
 
+from pydantic import Field
 from sqlmodel import SQLModel
 
 
-class MelhorOferta(SQLModel):
+class OfertaDaLoja(SQLModel):
     loja_id: int
     loja_nome: str
     preco: Decimal
@@ -12,5 +13,7 @@ class MelhorOferta(SQLModel):
 
 
 class ResumoOfertas(SQLModel):
-    total_ofertas: int = 0
-    melhor_oferta: Optional[MelhorOferta] = None
+    # da mais barata para a mais cara; `melhor_oferta` é a primeira, repetida
+    # para o consumidor que só quer o destaque não depender da ordem
+    ofertas: list[OfertaDaLoja] = Field(default_factory=list)
+    melhor_oferta: Optional[OfertaDaLoja] = None

@@ -12,6 +12,17 @@ export function formatarPreco(valor: string): string {
   return `${negativo ? "-" : ""}R$ ${inteiro},${centavos}`;
 }
 
+function emCentavos(valor: string): number {
+  const [inteiro = "0", decimal = ""] = valor.trim().split(".");
+  return Number(inteiro || "0") * 100 + Number(`${decimal}00`.slice(0, 2));
+}
+
+export function somarPrecos(itens: Array<{ preco: string; quantidade: number }>): string {
+  const total = itens.reduce((soma, item) => soma + emCentavos(item.preco) * item.quantidade, 0);
+
+  return `${Math.trunc(total / 100)}.${String(total % 100).padStart(2, "0")}`;
+}
+
 /**
  * Aceita o que o usuário digita em pt-BR ("1.500,90") e devolve o formato que a
  * query string da API espera ("1500.90"). Devolve undefined se não sobrar número.
