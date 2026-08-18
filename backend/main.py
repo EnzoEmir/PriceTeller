@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-EM_PRODUCAO = settings.environment.lower() == "production"
+EM_PRODUCAO = settings.em_producao
 
 app = FastAPI(
     lifespan=lifespan,
@@ -35,12 +35,14 @@ app = FastAPI(
 
 registrar_handlers(app)
 
+# sem allow_credentials: a montagem vive no localStorage e a escrita é
+# autenticada por header fora do navegador, então nenhuma resposta precisa
+# carregar cookie. Só o navegador chega aqui, e só com GET.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET"],
+    allow_headers=["Content-Type"],
 )
 
 app.include_router(categorias.router)
