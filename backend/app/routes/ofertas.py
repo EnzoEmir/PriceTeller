@@ -5,6 +5,7 @@ from typing import List
 from app.core.database import get_session
 from app.core.security import exigir_api_key
 from app.models.oferta import Oferta
+from app.schemas.oferta import OfertaCreate, OfertaRead, OfertaUpdate
 from app.services.oferta_service import OfertaService
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -23,20 +24,20 @@ DELETE_LIMIT = "2/minute"      # 2 deleções por minuto
 
 @router.post(
     "/",
-    response_model=Oferta,
+    response_model=OfertaRead,
     status_code=201,
     dependencies=[Depends(exigir_api_key)],
 )
 @limiter.limit(CREATE_LIMIT)
 def criar_oferta(
     request: Request,  # <-- Adicionado
-    oferta: Oferta, 
+    oferta: OfertaCreate,
     session: Session = Depends(get_session)
 ):
-    return servicoOferta.criar_oferta(oferta, session)
+    return servicoOferta.criar_oferta(Oferta(**oferta.model_dump()), session)
 
 
-@router.get("/", response_model=List[Oferta])
+@router.get("/", response_model=List[OfertaRead])
 @limiter.limit(READ_LIMIT)
 def listar_ofertas(
     request: Request,  # <-- Adicionado
@@ -45,7 +46,7 @@ def listar_ofertas(
     return servicoOferta.listar_ofertas(session)
 
 
-@router.get("/{oferta_id}", response_model=Oferta)
+@router.get("/{oferta_id}", response_model=OfertaRead)
 @limiter.limit(READ_LIMIT)
 def buscar_oferta(
     request: Request,  # <-- Adicionado
@@ -57,17 +58,19 @@ def buscar_oferta(
 
 @router.put(
     "/{oferta_id}",
-    response_model=Oferta,
+    response_model=OfertaRead,
     dependencies=[Depends(exigir_api_key)],
 )
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_oferta(
     request: Request,  # <-- Adicionado
     oferta_id: int,
-    oferta_atualizada: Oferta,
+    oferta_atualizada: OfertaUpdate,
     session: Session = Depends(get_session)
 ):
-    return servicoOferta.atualizar_oferta(oferta_id, oferta_atualizada, session)
+    return servicoOferta.atualizar_oferta(
+        oferta_id, Oferta(**oferta_atualizada.model_dump()), session
+    )
 
 
 @router.delete(
