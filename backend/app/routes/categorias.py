@@ -24,7 +24,7 @@ servicoCategoria = CategoriaService()
 )
 @limiter.limit("5/minute")  # Limite mais restritivo para criação
 def criar_categoria(
-    request: Request,  # <-- Adicione o parâmetro request
+    request: Request,
     categoria: CategoriaCreate,
     session: Session = Depends(get_session)
 ):
@@ -33,7 +33,7 @@ def criar_categoria(
 @router.get("/", response_model=List[CategoriaRead])
 @limiter.limit("100/minute")  # Limite mais alto para leitura
 def listar_categoria(
-    request: Request,  # <-- Adicione o parâmetro request
+    request: Request,
     session: Session = Depends(get_session)
 ):
     return servicoCategoria.listar_categorias(session)
@@ -41,7 +41,7 @@ def listar_categoria(
 @router.get("/{categoria_id}", response_model=CategoriaRead)
 @limiter.limit("60/minute")
 def buscar_categoria(
-    request: Request,  # <-- Adicione o parâmetro request
+    request: Request,
     categoria_id: int,
     session: Session = Depends(get_session)
 ):
@@ -54,7 +54,7 @@ def buscar_categoria(
 )
 @limiter.limit("10/minute")
 def atualizar_categoria(
-    request: Request,  # <-- Adicione o parâmetro request
+    request: Request,
     categoria_id: int,
     categoria: CategoriaUpdate,
     session: Session = Depends(get_session)
@@ -70,7 +70,7 @@ def atualizar_categoria(
 )
 @limiter.limit("5/minute")
 def deletar_categoria(
-    request: Request,  # <-- Adicione o parâmetro request
+    request: Request,
     categoria_id: int,
     session: Session = Depends(get_session)
 ):

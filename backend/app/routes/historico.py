@@ -30,7 +30,7 @@ DELETE_LIMIT = "3/minute"      # 3 deleções por minuto
 )
 @limiter.limit(CREATE_LIMIT)
 def criar_historico(
-    request: Request,  # <-- Adicionado
+    request: Request,
     historico: HistoricoCreate,
     session: Session = Depends(get_session),
 ):
@@ -42,7 +42,7 @@ def criar_historico(
 @router.get("/", response_model=List[HistoricoRead])
 @limiter.limit(READ_LIMIT)
 def listar_historico(
-    request: Request,  # <-- Adicionado
+    request: Request,
     session: Session = Depends(get_session)
 ):
     return servicoHistorico.listar_historico(session)
@@ -51,7 +51,7 @@ def listar_historico(
 @router.get("/{historico_id}", response_model=HistoricoRead)
 @limiter.limit(READ_LIMIT)
 def buscar_historico(
-    request: Request,  # <-- Adicionado
+    request: Request,
     historico_id: int, 
     session: Session = Depends(get_session)
 ):
@@ -65,7 +65,7 @@ def buscar_historico(
 )
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_historico(
-    request: Request,  # <-- Adicionado
+    request: Request,
     historico_id: int,
     historico_atualizado: HistoricoUpdate,
     session: Session = Depends(get_session)
@@ -84,7 +84,7 @@ def atualizar_historico(
 )
 @limiter.limit(DELETE_LIMIT)
 def deletar_historico(
-    request: Request,  # <-- Adicionado
+    request: Request,
     historico_id: int,
     session: Session = Depends(get_session)
 ):

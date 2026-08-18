@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request  # <-- Adicione Request
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 from typing import List
 
@@ -30,7 +30,7 @@ DELETE_LIMIT = "2/minute"      # 2 deleções por minuto
 )
 @limiter.limit(CREATE_LIMIT)
 def criar_oferta(
-    request: Request,  # <-- Adicionado
+    request: Request,
     oferta: OfertaCreate,
     session: Session = Depends(get_session)
 ):
@@ -40,7 +40,7 @@ def criar_oferta(
 @router.get("/", response_model=List[OfertaRead])
 @limiter.limit(READ_LIMIT)
 def listar_ofertas(
-    request: Request,  # <-- Adicionado
+    request: Request,
     session: Session = Depends(get_session)
 ):
     return servicoOferta.listar_ofertas(session)
@@ -49,7 +49,7 @@ def listar_ofertas(
 @router.get("/{oferta_id}", response_model=OfertaRead)
 @limiter.limit(READ_LIMIT)
 def buscar_oferta(
-    request: Request,  # <-- Adicionado
+    request: Request,
     oferta_id: int, 
     session: Session = Depends(get_session)
 ):
@@ -63,7 +63,7 @@ def buscar_oferta(
 )
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_oferta(
-    request: Request,  # <-- Adicionado
+    request: Request,
     oferta_id: int,
     oferta_atualizada: OfertaUpdate,
     session: Session = Depends(get_session)
@@ -80,7 +80,7 @@ def atualizar_oferta(
 )
 @limiter.limit(DELETE_LIMIT)
 def deletar_oferta(
-    request: Request,  # <-- Adicionado
+    request: Request,
     oferta_id: int, 
     session: Session = Depends(get_session)
 ):

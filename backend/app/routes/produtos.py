@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, Request  # <-- Adicione Request
+from fastapi import APIRouter, Depends, Query, Request
 from sqlmodel import Session
 
 from app.core.database import get_session
@@ -43,7 +43,7 @@ DELETE_LIMIT = "3/minute"       # 3 deleções por minuto
 )
 @limiter.limit(CREATE_LIMIT)
 def criar_produto(
-    request: Request,  # <-- Adicionado
+    request: Request,
     produto: ProdutoCreate, 
     session: Session = Depends(get_session)
 ):
@@ -53,7 +53,7 @@ def criar_produto(
 @router.get("/", response_model=Pagina[ProdutoComOfertas])
 @limiter.limit(READ_LIST_LIMIT)  # Limite menor pois a consulta é complexa
 def listar_produtos(
-    request: Request,  # <-- Adicionado
+    request: Request,
     page: int = Query(1, ge=1, description="Número da página, começando em 1"),
     limit: int = Query(20, ge=1, le=100, description="Produtos por página"),
     q: Optional[str] = Query(None, description="Busca em marca, modelo e termos de busca"),
@@ -74,7 +74,7 @@ def listar_produtos(
 @router.get("/{produto_id}", response_model=ProdutoRead)
 @limiter.limit(READ_LIMIT)
 def buscar_produto(
-    request: Request,  # <-- Adicionado
+    request: Request,
     produto_id: int, 
     session: Session = Depends(get_session)
 ):
@@ -88,7 +88,7 @@ def buscar_produto(
 )
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_produto(
-    request: Request,  # <-- Adicionado
+    request: Request,
     produto_id: int,
     produto_atualizado: ProdutoUpdate,
     session: Session = Depends(get_session)
@@ -105,7 +105,7 @@ def atualizar_produto(
 )
 @limiter.limit(DELETE_LIMIT)
 def deletar_produto(
-    request: Request,  # <-- Adicionado
+    request: Request,
     produto_id: int, 
     session: Session = Depends(get_session)
 ):

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request  # <-- Adicione Request
+from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 from typing import List
 
@@ -30,7 +30,7 @@ DELETE_LIMIT = "3/minute"      # 3 deleções por minuto
 )
 @limiter.limit(CREATE_LIMIT)
 def criar_loja(
-    request: Request,  # <-- Adicionado
+    request: Request,
     loja: LojaCreate,
     session: Session = Depends(get_session)
 ):
@@ -40,7 +40,7 @@ def criar_loja(
 @router.get("/", response_model=List[LojaRead])
 @limiter.limit(READ_LIMIT)
 def listar_lojas(
-    request: Request,  # <-- Adicionado
+    request: Request,
     session: Session = Depends(get_session)
 ):
     return servicoLoja.listar_lojas(session)
@@ -49,7 +49,7 @@ def listar_lojas(
 @router.get("/{loja_id}", response_model=LojaRead)
 @limiter.limit(READ_LIMIT)
 def buscar_loja(
-    request: Request,  # <-- Adicionado
+    request: Request,
     loja_id: int, 
     session: Session = Depends(get_session)
 ):
@@ -63,7 +63,7 @@ def buscar_loja(
 )
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_loja(
-    request: Request,  # <-- Adicionado
+    request: Request,
     loja_id: int,
     loja_atualizada: LojaUpdate,
     session: Session = Depends(get_session)
@@ -78,7 +78,7 @@ def atualizar_loja(
 )
 @limiter.limit(DELETE_LIMIT)
 def deletar_loja(
-    request: Request,  # <-- Adicionado
+    request: Request,
     loja_id: int, 
     session: Session = Depends(get_session)
 ):
