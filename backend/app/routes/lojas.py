@@ -3,6 +3,7 @@ from sqlmodel import Session
 from typing import List
 
 from app.core.database import get_session
+from app.core.security import exigir_api_key
 from app.models.loja import Loja
 from app.services.loja_service import LojaService
 from slowapi import Limiter
@@ -20,7 +21,12 @@ READ_LIMIT = "120/minute"      # 120 leituras por minuto (lojas são consultadas
 UPDATE_LIMIT = "10/minute"     # 10 atualizações por minuto
 DELETE_LIMIT = "3/minute"      # 3 deleções por minuto
 
-@router.post("/", response_model=Loja, status_code=201)
+@router.post(
+    "/",
+    response_model=Loja,
+    status_code=201,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(CREATE_LIMIT)
 def criar_loja(
     request: Request,  # <-- Adicionado
@@ -49,7 +55,11 @@ def buscar_loja(
     return servicoLoja.buscar_loja(loja_id, session)
 
 
-@router.put("/{loja_id}", response_model=Loja)
+@router.put(
+    "/{loja_id}",
+    response_model=Loja,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_loja(
     request: Request,  # <-- Adicionado
@@ -60,7 +70,11 @@ def atualizar_loja(
     return servicoLoja.atualizar_loja(loja_id, loja_atualizada, session)
 
 
-@router.delete("/{loja_id}", status_code=204)
+@router.delete(
+    "/{loja_id}",
+    status_code=204,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(DELETE_LIMIT)
 def deletar_loja(
     request: Request,  # <-- Adicionado

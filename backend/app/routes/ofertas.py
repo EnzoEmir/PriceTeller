@@ -3,6 +3,7 @@ from sqlmodel import Session
 from typing import List
 
 from app.core.database import get_session
+from app.core.security import exigir_api_key
 from app.models.oferta import Oferta
 from app.services.oferta_service import OfertaService
 from slowapi import Limiter
@@ -20,7 +21,12 @@ READ_LIMIT = "80/minute"       # 80 leituras por minuto
 UPDATE_LIMIT = "8/minute"      # 8 atualizações por minuto
 DELETE_LIMIT = "2/minute"      # 2 deleções por minuto
 
-@router.post("/", response_model=Oferta, status_code=201)
+@router.post(
+    "/",
+    response_model=Oferta,
+    status_code=201,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(CREATE_LIMIT)
 def criar_oferta(
     request: Request,  # <-- Adicionado
@@ -49,7 +55,11 @@ def buscar_oferta(
     return servicoOferta.buscar_oferta(oferta_id, session)
 
 
-@router.put("/{oferta_id}", response_model=Oferta)
+@router.put(
+    "/{oferta_id}",
+    response_model=Oferta,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_oferta(
     request: Request,  # <-- Adicionado
@@ -60,7 +70,11 @@ def atualizar_oferta(
     return servicoOferta.atualizar_oferta(oferta_id, oferta_atualizada, session)
 
 
-@router.delete("/{oferta_id}", status_code=204)
+@router.delete(
+    "/{oferta_id}",
+    status_code=204,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(DELETE_LIMIT)
 def deletar_oferta(
     request: Request,  # <-- Adicionado

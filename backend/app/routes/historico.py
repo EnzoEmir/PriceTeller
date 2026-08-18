@@ -3,6 +3,7 @@ from sqlmodel import Session
 from typing import List
 
 from app.core.database import get_session
+from app.core.security import exigir_api_key
 from app.models.historico import Historico
 from app.services.historico_service import HistoricoService
 from slowapi import Limiter
@@ -20,7 +21,12 @@ READ_LIMIT = "100/minute"      # 100 leituras por minuto
 UPDATE_LIMIT = "10/minute"     # 10 atualizações por minuto
 DELETE_LIMIT = "3/minute"      # 3 deleções por minuto
 
-@router.post("/", response_model=Historico, status_code=201)
+@router.post(
+    "/",
+    response_model=Historico,
+    status_code=201,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(CREATE_LIMIT)
 def criar_historico(
     request: Request,  # <-- Adicionado
@@ -49,7 +55,11 @@ def buscar_historico(
     return servicoHistorico.buscar_historico(historico_id, session)
 
 
-@router.put("/{historico_id}", response_model=Historico)
+@router.put(
+    "/{historico_id}",
+    response_model=Historico,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_historico(
     request: Request,  # <-- Adicionado
@@ -60,7 +70,11 @@ def atualizar_historico(
     return servicoHistorico.atualizar_historico(historico_id, historico_atualizado, session)
 
 
-@router.delete("/{historico_id}", status_code=204)
+@router.delete(
+    "/{historico_id}",
+    status_code=204,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(DELETE_LIMIT)
 def deletar_historico(
     request: Request,  # <-- Adicionado

@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlmodel import Session
 
 from app.core.config import settings
@@ -24,7 +24,14 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan)
+EM_PRODUCAO = settings.environment.lower() == "production"
+
+app = FastAPI(
+    lifespan=lifespan,
+    docs_url=None if EM_PRODUCAO else "/docs",
+    redoc_url=None if EM_PRODUCAO else "/redoc",
+    openapi_url=None if EM_PRODUCAO else "/openapi.json",
+)
 
 registrar_handlers(app)
 
@@ -50,8 +57,7 @@ def read_root():
         "version": "1.0.0",
         "status": "online",
         "description": "API para busca de preços de componentes de computadores",
-        "environment": settings.environment,
-        "docs": "/docs",
+        "docs": None if EM_PRODUCAO else "/docs",
         "health": "/health"
     }
 
@@ -59,7 +65,6 @@ def read_root():
 def health_check():
     return {
         "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "service": "Price Teller API",
-        "environment": settings.environment
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "service": "Price Teller API"
     }

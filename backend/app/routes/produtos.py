@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Query, Request  # <-- Adicione Request
 from sqlmodel import Session
 
 from app.core.database import get_session
+from app.core.security import exigir_api_key
 from app.models.produto import Produto
 from app.schemas.pagina import Pagina
 from app.schemas.produto import (
@@ -34,7 +35,12 @@ READ_LIST_LIMIT = "40/minute"   # 40 listagens por minuto (com filtros, é mais 
 UPDATE_LIMIT = "10/minute"      # 10 atualizações por minuto
 DELETE_LIMIT = "3/minute"       # 3 deleções por minuto
 
-@router.post("/", response_model=ProdutoRead, status_code=201)
+@router.post(
+    "/",
+    response_model=ProdutoRead,
+    status_code=201,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(CREATE_LIMIT)
 def criar_produto(
     request: Request,  # <-- Adicionado
@@ -75,7 +81,11 @@ def buscar_produto(
     return servicoProduto.buscar_produto(produto_id, session)
 
 
-@router.put("/{produto_id}", response_model=ProdutoRead)
+@router.put(
+    "/{produto_id}",
+    response_model=ProdutoRead,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(UPDATE_LIMIT)
 def atualizar_produto(
     request: Request,  # <-- Adicionado
@@ -88,7 +98,11 @@ def atualizar_produto(
     )
 
 
-@router.delete("/{produto_id}", status_code=204)
+@router.delete(
+    "/{produto_id}",
+    status_code=204,
+    dependencies=[Depends(exigir_api_key)],
+)
 @limiter.limit(DELETE_LIMIT)
 def deletar_produto(
     request: Request,  # <-- Adicionado
