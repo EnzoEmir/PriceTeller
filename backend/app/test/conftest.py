@@ -10,7 +10,15 @@ from app.models.categoria import Categoria
 from app.models.loja import Loja
 from app.models.oferta import Oferta
 from app.models.produto import Produto
+from app.routes import categorias, historico, lojas, ofertas, produtos
 from main import app
+
+# Cada router cria o Limiter no nível do módulo, então o contador é único para a
+# suíte inteira e o TestClient chega sempre do mesmo host. Sem desligar, a suíte
+# esbarra no teto do endpoint e o teste seguinte quebra com um 429 que não tem
+# relação com o que ele testa.
+for _router in (categorias, historico, lojas, ofertas, produtos):
+    _router.limiter.enabled = False
 
 
 @pytest.fixture(name="session")

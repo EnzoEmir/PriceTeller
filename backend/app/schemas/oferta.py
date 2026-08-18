@@ -4,6 +4,27 @@ from typing import Optional
 from pydantic import Field
 from sqlmodel import SQLModel
 
+from app.schemas.tipos import Preco, UrlHttp
+
+
+class OfertaBase(SQLModel):
+    fk_produto_id: int
+    fk_loja_id: int
+    preco_atual: Preco
+    url_link: UrlHttp
+
+
+class OfertaCreate(OfertaBase):
+    pass
+
+
+class OfertaUpdate(OfertaBase):
+    pass
+
+
+class OfertaRead(OfertaBase):
+    id: int
+
 
 class OfertaDaLoja(SQLModel):
     loja_id: int

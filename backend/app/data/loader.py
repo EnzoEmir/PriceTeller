@@ -1,14 +1,19 @@
 import json
-from decimal import Decimal
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from pydantic import ValidationError
 from sqlmodel import Session, select
 
 from app.models.categoria import Categoria
 from app.models.loja import Loja
 from app.models.oferta import Oferta
 from app.models.produto import Produto
+from app.schemas.categoria import CategoriaCreate
+from app.schemas.loja import LojaCreate
+from app.schemas.oferta import OfertaCreate
+from app.schemas.produto import ProdutoCreate
+from app.schemas.tipos import somente_http
 
 CAMINHO_PADRAO = Path(__file__).parent / "catalogo.json"
 
@@ -18,6 +23,18 @@ CAMPOS_OFERTA = ("preco_atual", "url_link")
 
 def _ler(caminho: Path) -> dict:
     return json.loads(caminho.read_text(encoding="utf-8"))
+
+
+def _validar(schema, valores: dict, contexto: str) -> dict:
+    """
+    Os modelos são `table=True`, e o SQLModel ignora validação nesses, então o
+    catálogo entraria no banco sem checagem nenhuma. O erro do Pydantic sozinho
+    não diz de qual linha do JSON veio, daí o contexto.
+    """
+    try:
+        return schema(**valores).model_dump()
+    except ValidationError as erro:
+        raise ValueError(f"{contexto}: {erro}") from erro
 
 
 def _resolver_por_nome(session: Session, modelo, registros: dict[str, dict]) -> tuple[dict, int]:
@@ -73,6 +90,10 @@ class _IndiceProdutos:
 
 def carregar_catalogo(session: Session, caminho: Path = CAMINHO_PADRAO) -> dict:
     dados = _ler(caminho)
+
+    for nome in dados["categorias"]:
+        _validar(CategoriaCreate, {"nome": nome}, f"categoria '{nome}'")
+
     categorias, categorias_criadas = _resolver_por_nome(
         session, Categoria, {nome: {} for nome in dados["categorias"]}
     )
@@ -92,14 +113,18 @@ def carregar_catalogo(session: Session, caminho: Path = CAMINHO_PADRAO) -> dict:
                 f"'{item['categoria']}'"
             )
 
-        valores = {
-            "fk_categoria_id": categorias[item["categoria"]].id,
-            "marca": item["marca"],
-            "modelo": item["modelo"],
-            "ean": item.get("ean"),
-            "termos_busca": item.get("termos_busca"),
-            "specs": item.get("specs"),
-        }
+        valores = _validar(
+            ProdutoCreate,
+            {
+                "fk_categoria_id": categorias[item["categoria"]].id,
+                "marca": item["marca"],
+                "modelo": item["modelo"],
+                "ean": item.get("ean"),
+                "termos_busca": item.get("termos_busca"),
+                "specs": item.get("specs"),
+            },
+            f"produto '{item['marca']} {item['modelo']}'",
+        )
 
         produto = indice.localizar(item)
 
@@ -129,8 +154,20 @@ def carregar_ofertas(session: Session, caminho: Path = CAMINHO_PADRAO) -> dict:
     bases: dict[str, dict] = {}
     for item in dados["produtos"]:
         for oferta in item.get("ofertas", []):
+            contexto = f"oferta de '{item['marca']} {item['modelo']}' na loja '{oferta['loja']}'"
+
+            try:
+                somente_http(oferta["url_link"])
+            except Exception as erro:
+                raise ValueError(f"{contexto}: url_link inválido") from erro
+
             partes = urlsplit(oferta["url_link"])
-            bases.setdefault(oferta["loja"], {"url_base": f"{partes.scheme}://{partes.netloc}"})
+            loja = _validar(
+                LojaCreate,
+                {"nome": oferta["loja"], "url_base": f"{partes.scheme}://{partes.netloc}"},
+                contexto,
+            )
+            bases.setdefault(loja["nome"], {"url_base": loja["url_base"]})
 
     lojas, lojas_criadas = _resolver_por_nome(session, Loja, bases)
     indice = _IndiceProdutos(session)
@@ -159,17 +196,21 @@ def carregar_ofertas(session: Session, caminho: Path = CAMINHO_PADRAO) -> dict:
 
         for dados_oferta in item["ofertas"]:
             loja = lojas[dados_oferta["loja"]]
-            valores = {
-                "preco_atual": Decimal(dados_oferta["preco"]),
-                "url_link": dados_oferta["url_link"],
-            }
+            valores = _validar(
+                OfertaCreate,
+                {
+                    "fk_produto_id": produto.id,
+                    "fk_loja_id": loja.id,
+                    "preco_atual": dados_oferta["preco"],
+                    "url_link": dados_oferta["url_link"],
+                },
+                f"oferta de '{item['marca']} {item['modelo']}' na loja '{dados_oferta['loja']}'",
+            )
 
             oferta = existentes.get((produto.id, loja.id))
 
             if oferta is None:
-                session.add(
-                    Oferta(fk_produto_id=produto.id, fk_loja_id=loja.id, **valores)
-                )
+                session.add(Oferta(**valores))
                 resumo["ofertas_criadas"] += 1
             elif _sincronizar(oferta, valores, CAMPOS_OFERTA):
                 session.add(oferta)
