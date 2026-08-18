@@ -32,10 +32,6 @@ class Settings(BaseSettings):
     )
 
     # Security
-    secret_key: str = Field(
-        default="dev-only-trocar-em-producao",
-        description="Secret key for authentication"
-    )
     admin_api_key: Optional[str] = Field(
         default=None,
         description="Credencial exigida no header X-API-Key pelas rotas de escrita"
