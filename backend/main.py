@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -12,14 +13,18 @@ from app.data.loader import carregar_catalogo, carregar_ofertas
 from app.models import Categoria, Produto, Loja, Oferta, Historico
 from app.routes import categorias, produtos, lojas, ofertas, historico
 
+# logger do próprio uvicorn: um logger novo não teria handler e a mensagem
+# sumiria, e print() com stdout em pipe fica preso no buffer
+logger = logging.getLogger("uvicorn.error")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     criar_tabelas()
 
     with Session(engine) as session:
-        print("catálogo:", carregar_catalogo(session))
-        print("ofertas:", carregar_ofertas(session))
+        logger.info("catálogo carregado: %s", carregar_catalogo(session))
+        logger.info("ofertas carregadas: %s", carregar_ofertas(session))
 
     yield
 
